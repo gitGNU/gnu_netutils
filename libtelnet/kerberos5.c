@@ -1,7 +1,7 @@
 /*
  *	$Source: /sources/inetutils/inetutils/libtelnet/kerberos5.c,v $
- *	$Author: miles $
- *	$Id: kerberos5.c,v 1.4 1997/01/11 03:47:14 miles Exp $
+ *	$Author: jbailey $
+ *	$Id: kerberos5.c,v 1.5 2000/03/15 06:32:45 jbailey Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -11,7 +11,7 @@
 #if !defined(lint) && !defined(SABER)
 static
 const
-char rcsid_kerberos5_c[] = "$Id: kerberos5.c,v 1.4 1997/01/11 03:47:14 miles Exp $";
+char rcsid_kerberos5_c[] = "$Id: kerberos5.c,v 1.5 2000/03/15 06:32:45 jbailey Exp $";
 #endif /* lint */
 
 /*-

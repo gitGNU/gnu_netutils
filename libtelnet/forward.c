@@ -1,11 +1,11 @@
 /*
  *    $Source: /sources/inetutils/inetutils/libtelnet/forward.c,v $
- *    $Id: forward.c,v 1.1 1997/03/01 16:02:06 miles Exp $
+ *    $Id: forward.c,v 1.2 2000/03/15 06:32:45 jbailey Exp $
  */
 
 #ifndef lint
 static char *rcsid_forward_c =
-  "$Id: forward.c,v 1.1 1997/03/01 16:02:06 miles Exp $";
+  "$Id: forward.c,v 1.2 2000/03/15 06:32:45 jbailey Exp $";
 #endif /* lint */
 #define LIBC_SCCS
 

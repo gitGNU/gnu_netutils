@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.14 1999/03/15 05:20:19 alainm Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.15 2000/03/15 06:32:45 jbailey Exp $
  */
 
 #ifdef HAVE_CONFIG_H
