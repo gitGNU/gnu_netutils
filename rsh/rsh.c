@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)rsh.c	8.3 (Berkeley) 4/6/94";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.1 1995/12/11 22:28:24 miles Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.2 1995/12/11 22:30:20 miles Exp $
  */
 
 #include <sys/types.h>
@@ -64,8 +64,6 @@ static char sccsid[] = "@(#)rsh.c	8.3 (Berkeley) 4/6/94";
 #include <string.h>
 #include <unistd.h>
 #include <varargs.h>
-
-#include "pathnames.h"
 
 #ifdef KERBEROS
 #include <kerberosIV/des.h>
