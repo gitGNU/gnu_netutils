@@ -37,7 +37,7 @@
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)net.c	5.5 (Berkeley) 6/1/90";*/
-static char rcsid[] = "$Id: net.c,v 1.2 2000/07/06 04:21:09 alainm Exp $";
+static char rcsid[] = "$Id: net.c,v 1.3 2000/07/19 04:08:39 alainm Exp $";
 #endif /* not lint */
 
 #include <sys/types.h>
@@ -48,8 +48,7 @@ static char rcsid[] = "$Id: net.c,v 1.2 2000/07/06 04:21:09 alainm Exp $";
 #include <ctype.h>
 
 void
-netwhois(name, host)
-	char *name, *host;
+netwhois(char *name, char *host)
 {
 	register FILE *fp;
 	register int c, lastc;

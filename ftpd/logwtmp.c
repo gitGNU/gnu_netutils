@@ -1,7 +1,7 @@
 /*
  SYSVish version:
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
 Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -84,8 +84,7 @@ static char sccsid[] = "@(#)logwtmp.c	8.1 (Berkeley) 6/4/93";
  * after login, but before logout).
  */
 void
-logwtmp(line, name, host)
-	const char *line, *name, *host;
+logwtmp(const char *line, const char *name, const char *host)
 {
   struct utmp ut;
 
@@ -132,7 +131,7 @@ logwtmp(line, name, host)
   }
 #else
   /* Do things the old way.  */
-  {  
+  {
 	struct utmp ut;
 	struct stat buf;
 	static int fd = -1;
