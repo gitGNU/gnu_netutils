@@ -800,42 +800,7 @@ recvrequest(cmd, local, remote, lmode, printnames)
 	}
 	oldintr = signal(SIGINT, abortrecv);
 	if (strcmp(local, "-") && *local != '|') {
-		if (access(local, 2) < 0) {
-			char *dir = strrchr(local, '/');
-
-			if (errno != ENOENT && errno != EACCES) {
-				warn("local: %s", local);
-				(void) signal(SIGINT, oldintr);
-				code = -1;
-				return;
-			}
-			if (dir != NULL)
-				*dir = 0;
-			d = access(dir ? local : ".", 2);
-			if (dir != NULL)
-				*dir = '/';
-			if (d < 0) {
-				warn("local: %s", local);
-				(void) signal(SIGINT, oldintr);
-				code = -1;
-				return;
-			}
-			if (!runique && errno == EACCES &&
-			    chmod(local, 0600) < 0) {
-				warn("local: %s", local);
-				(void) signal(SIGINT, oldintr);
-				(void) signal(SIGINT, oldintr);
-				code = -1;
-				return;
-			}
-			if (runique && errno == EACCES &&
-			   (local = gunique(local)) == NULL) {
-				(void) signal(SIGINT, oldintr);
-				code = -1;
-				return;
-			}
-		}
-		else if (runique && (local = gunique(local)) == NULL) {
+		if (runique && (local = gunique(local)) == NULL) {
 			(void) signal(SIGINT, oldintr);
 			code = -1;
 			return;
@@ -1520,19 +1485,9 @@ gunique(local)
 	char *local;
 {
 	static char *new = 0;
-	char *cp = strrchr(local, '/');
+	char *cp;
 	int d, count=0;
 	char ext = '1';
-
-	if (cp)
-		*cp = '\0';
-	d = access(cp ? local : ".", 2);
-	if (cp)
-		*cp = '/';
-	if (d < 0) {
-		warn("local: %s", local);
-		return ((char *) 0);
-	}
 
 	if (new)
 		free (new);
@@ -1545,7 +1500,9 @@ gunique(local)
 
 	cp = new + strlen(new);
 	*cp++ = '.';
-	while (!d) {
+	for (;;) {
+		struct stat st;
+
 		if (++count == 100) {
  			printf("runique: can't find unique file name.\n");
 			return ((char *) 0);
@@ -1556,8 +1513,13 @@ gunique(local)
 			ext = '0';
 		else
 			ext++;
-		if ((d = access(new, 0)) < 0)
-			break;
+
+		if (stat (new, &st) != 0)
+		    if (errno == ENOENT)
+				return new;
+			else
+			  	return 0;
+
 		if (ext != '0')
 			cp--;
 		else if (*(cp - 2) == '.')
@@ -1567,7 +1529,6 @@ gunique(local)
 			cp--;
 		}
 	}
-	return (new);
 }
 
 void
