@@ -130,7 +130,7 @@ help ()
 #endif
 
 #if defined (ENCRYPTION) || defined (AUTHENTICATION) || defined (TN3270)
-  putc ('\n');
+  putc ('\n', stdout);
 #endif
 
   puts ("\
