@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.12 1997/09/15 18:51:20 miles Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.13 1999/03/14 02:29:37 alainm Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -115,7 +115,7 @@ void	usage __P((void));
 void	warning __P((const char *, ...));
 
 /* basename (argv[0]).  NetBSD, linux, & gnu libc all define it.  */
-extern char *__progname;
+extern  char *__progname;
 
 static struct option long_options[] =
 {
@@ -135,7 +135,7 @@ FILE *stream;
 {
   fprintf(stream,
 	  "Usage: %s [-nd%s]%s[-l USER] [USER@]HOST [COMMAND [ARG...]]\n",
-	  __progname,
+	 __progname,
 #ifdef KERBEROS
 #ifdef ENCRYPTION
 	    "x", " [-k REALM] ");
@@ -299,8 +299,10 @@ main(argc, argv)
 	if (!argv[optind]) {
 		if (asrsh)
 			*argv = "rlogin";
+		seteuid(getuid());
+		setuid(getuid());
 		execv(PATH_RLOGIN, argv);
-		err(1, "can't exec %s", PATH_RLOGIN);
+		errx(1, "can't exec %s", PATH_RLOGIN);
 	}
 
 	argc -= optind;
