@@ -89,31 +89,37 @@ int error();
  *	data
  */
 /*ARGSUSED*/
+int
 main(argc, argv)
 	int argc;
 	char **argv;
 {
 	struct sockaddr_in from;
-	int fromlen;
+	int fromlen, sockfd = STDIN_FILENO;
 
 	fromlen = sizeof (from);
-	if (getpeername(0, (struct sockaddr *)&from, &fromlen) < 0) {
+	if (getpeername(sockfd, (struct sockaddr *)&from, &fromlen) < 0) {
 		(void)fprintf(stderr,
 		    "rexecd: getpeername: %s\n", strerror(errno));
 		exit(1);
 	}
-	doit(0, &from);
+	doit(sockfd, &from);
 }
 
 char	username[20] = "USER=";
+char	logname[23] = "LOGNAME=";
 char	homedir[64] = "HOME=";
 char	shell[64] = "SHELL=";
 char	path[sizeof(PATH_DEFPATH) + sizeof("PATH=")] = "PATH=";
 char	*envinit[] =
-	    {homedir, shell, path, username, 0};
+	    {homedir, shell, path, username, logname, 0};
 extern char	**environ;
 
+#ifdef HAVE_SOCKADDR_IN_SIN_LEN
+struct	sockaddr_in asin = { sizeof(asin), AF_INET };
+#else
 struct	sockaddr_in asin = { AF_INET };
+#endif
 
 char *getstr ();
 
@@ -141,9 +147,12 @@ doit(f, fromp)
 	  }
 	}
 #endif
-	dup2(f, 0);
-	dup2(f, 1);
-	dup2(f, 2);
+	if (f != STDIN_FILENO) {
+	    dup2(f, STDIN_FILENO);
+	    dup2(f, STDOUT_FILENO);
+	    dup2(f, STDERR_FILENO);
+	}
+
 	(void) alarm(60);
 	port = 0;
 	for (;;) {
@@ -190,7 +199,7 @@ doit(f, fromp)
 		error("No remote directory.\n");
 		exit(1);
 	}
-	(void) write(2, "\0", 1);
+	(void) write(STDERR_FILENO, "\0", 1);
 	if (port) {
 		(void) pipe(pv);
 		pid = fork();
@@ -199,7 +208,9 @@ doit(f, fromp)
 			exit(1);
 		}
 		if (pid) {
-			(void) close(0); (void) close(1); (void) close(2);
+			(void) close(STDIN_FILENO);
+			(void) close(STDOUT_FILENO);
+			(void) close(STDERR_FILENO);
 			(void) close(f); (void) close(pv[1]);
 			readfrom = (1<<s) | (1<<pv[0]);
 			ioctl(pv[1], FIONBIO, (char *)&one);
@@ -228,14 +239,16 @@ doit(f, fromp)
 		}
 		setpgid (0, getpid());
 		(void) close(s); (void)close(pv[0]);
-		dup2(pv[1], 2);
+		dup2(pv[1], STDERR_FILENO);
 	}
 	if (*pwd->pw_shell == '\0')
 		pwd->pw_shell = PATH_BSHELL;
 	if (f > 2)
 		(void) close(f);
+	(void) setegid((gid_t)pwd->pw_gid);
 	(void) setgid((gid_t)pwd->pw_gid);
 	initgroups(pwd->pw_name, pwd->pw_gid);
+	(void) seteuid((uid_t)pwd->pw_uid);
 	(void) setuid((uid_t)pwd->pw_uid);
 	(void)strcat(path, PATH_DEFPATH);
 	environ = envinit;
@@ -261,7 +274,7 @@ error(fmt, a1, a2, a3)
 
 	buf[0] = 1;
 	snprintf (buf + 1, sizeof buf - 1, fmt, a1, a2, a3);
-	write (2, buf, strlen(buf));
+	write (STDERR_FILENO, buf, strlen(buf));
 }
 
 char *
