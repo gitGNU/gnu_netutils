@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.4 1996/07/22 04:05:06 miles Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.5 1996/07/22 16:59:05 miles Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -68,6 +68,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 #include <string.h>
 #include <unistd.h>
 #include <varargs.h>
+#include <getopt.h>
 
 #ifdef KERBEROS
 #include <kerberosIV/des.h>
@@ -103,6 +104,11 @@ main(argc, argv)
 	pid_t pid;
 	uid_t uid;
 	char *args, *host, *p, *user;
+
+#ifndef HAVE___PROGNAME
+	extern char *__progname;
+	__progname = argv[0];
+#endif
 
 	argoff = asrsh = dflag = nflag = 0;
 	one = 1;
