@@ -326,6 +326,21 @@ cmdscanner(top)
 	if (!top)
 		(void) putchar('\n');
 	for (;;) {
+
+#if HAVE_LIBREADLINE
+		if (line) {
+			free(line);
+			line = 0;
+		}
+		line = readline (prompt);
+		if (!line)
+			quit (0, 0);
+		if (line && *line)
+			add_history (line);
+		l = strlen(line);
+		if (l == 0)
+			break;
+#else
 		if (prompt) {
 			printf (prompt);
 			fflush(stdout);
@@ -346,6 +361,7 @@ cmdscanner(top)
 				/* void */;
 			break;
 		} /* else it was a line without a newline */
+#endif
 		makeargv();
 		if (margc == 0) {
 			continue;
