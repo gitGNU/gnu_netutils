@@ -350,6 +350,16 @@ doit(f, fromp)
 		if (f > 2)	/* f should always be 0, but... */
 			(void) close(f);
 		setup_term(0);
+#ifdef UTMPX
+		/* those system require utmpx entry for login to work */
+		{
+			char * utmp_ptsid();
+			void utmp_init();
+			char * ut_id = utmp_id(line, "rl");
+			utmp_init(line + sizeof("/dev/") -1, ".rlogin",
+				utmp_id);
+		}
+#endif
 		if (authenticated) {
 #ifdef	KERBEROS
 			if (use_kerberos && (pwd->pw_uid == 0))
@@ -584,6 +594,11 @@ cleanup(signo)
 	char *p;
 
 	p = line + sizeof(PATH_DEV) - 1;
+#ifdef UTMPX
+	utmpx_logout(p);
+	(void)chmod(line, 0644);
+	(void)chown(line, 0, 0);
+#else
 	if (logout(p))
 		logwtmp(p, "", "");
 	(void)chmod(line, 0666);
@@ -591,6 +606,7 @@ cleanup(signo)
 	*p = 'p';
 	(void)chmod(line, 0666);
 	(void)chown(line, 0, 0);
+#endif
 	shutdown(netf, 2);
 	exit(1);
 }
