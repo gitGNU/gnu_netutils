@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.11 1997/02/17 04:31:46 miles Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.12 1997/09/15 18:51:20 miles Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -137,7 +137,7 @@ FILE *stream;
 	  "Usage: %s [-nd%s]%s[-l USER] [USER@]HOST [COMMAND [ARG...]]\n",
 	  __progname,
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	    "x", " [-k REALM] ");
 #else
 	    "", " [-k REALM] ");
@@ -164,7 +164,7 @@ help ()
   -l USER, --user=USER       Run as USER on the remote system");
   puts ("\
   -n, --no-input             Use /dev/null as input");
-#ifdef CRYPT
+#ifdef ENCRYPTION
   puts ("\
   -x, --encrypt              Encrypt all data using DES");
 #endif
@@ -230,7 +230,7 @@ main(argc, argv)
 	}
 
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #define	OPTIONS	"8KLdek:l:nwx"
 #else
 #define	OPTIONS	"8KLdek:l:nw"
@@ -268,7 +268,7 @@ main(argc, argv)
 			nflag = 1;
 			break;
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		case 'x':
 			doencrypt = 1;
 			des_set_key(cred.session, schedule);
@@ -322,7 +322,7 @@ main(argc, argv)
 		user = pw->pw_name;
 
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	/* -x turns off -n */
 	if (doencrypt)
 		nflag = 0;
@@ -362,7 +362,7 @@ try_connect:
 		if (dest_realm == NULL)
 			dest_realm = krb_realmofhost(host);
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		if (doencrypt)
 			rem = krcmd_mutual(&host, sp->s_port, user, args,
 			    &rfd2, dest_realm, &cred, schedule);
@@ -429,7 +429,7 @@ try_connect:
 	}
 
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	if (!doencrypt)
 #endif
 #endif
@@ -475,7 +475,7 @@ rewrite:
 		if (!FD_ISSET(rem, &rembits))
 			goto rewrite;
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		if (doencrypt)
 			wc = des_write(rem, bp, cc);
 		else
@@ -516,7 +516,7 @@ done:
 			errno = 0;
 #ifdef KERBEROS
 #ifdef CRYPT
-			if (doencrypt)
+			if (doenencryption)
 				cc = des_read(rfd2, buf, sizeof buf);
 			else
 #endif
@@ -531,7 +531,7 @@ done:
 		if (FD_ISSET(rem, &ready)) {
 			errno = 0;
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 			if (doencrypt)
 				cc = des_read(rem, buf, sizeof buf);
 			else
@@ -555,7 +555,7 @@ sendsig(sig)
 
 	signo = sig;
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	if (doencrypt)
 		(void)des_write(rfd2, &signo, 1);
 	else

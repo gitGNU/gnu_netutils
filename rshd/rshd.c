@@ -170,7 +170,7 @@ main(argc, argv)
 			vacuous = 1;
 			break;
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		case 'x':
 			doencrypt = 1;
 			break;
@@ -193,7 +193,7 @@ main(argc, argv)
 		syslog(LOG_ERR, "only one of -k and -v allowed");
 		exit(2);
 	}
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	if (doencrypt && !use_kerberos) {
 		syslog(LOG_ERR, "-k is required for -x");
 		exit(2);
@@ -421,7 +421,7 @@ doit(fromp)
 		authopts = 0L;
 		strcpy(instance, "*");
 		version[VERSION_SIZE - 1] = '\0';
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		if (doencrypt) {
 			struct sockaddr_in local_addr;
 			rc = sizeof(local_addr);
@@ -523,7 +523,7 @@ fail:
 			error("Can't make pipe.\n");
 			exit(1);
 		}
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 		if (doencrypt) {
 			if (pipe(pv1) < 0) {
@@ -543,7 +543,7 @@ fail:
 			exit(1);
 		}
 		if (pid) {
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 			if (doencrypt) {
 				static char msg[] = SECURE_MESSAGE;
@@ -568,7 +568,7 @@ fail:
 				nfd = pv[0];
 			else
 				nfd = s;
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 			if (doencrypt) {
 				FD_ZERO(&writeto);
@@ -586,7 +586,7 @@ fail:
 			nfd++;
 			do {
 				ready = readfrom;
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 				if (doencrypt) {
 					wready = writeto;
@@ -602,7 +602,7 @@ fail:
 						break;
 				if (FD_ISSET(s, &ready)) {
 					int	ret;
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 					if (doencrypt)
 						ret = des_read(s, &sig, 1);
@@ -622,7 +622,7 @@ fail:
 						shutdown(s, 1+1);
 						FD_CLR(pv[0], &readfrom);
 					} else {
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 						if (doencrypt)
 							(void)
@@ -634,7 +634,7 @@ fail:
 							  write(s, buf, cc);
 					}
 				}
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 				if (doencrypt && FD_ISSET(pv1[0], &ready)) {
 					errno = 0;
@@ -661,7 +661,7 @@ fail:
 #endif
 
 			} while (FD_ISSET(s, &readfrom) ||
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 			    (doencrypt && FD_ISSET(pv1[0], &readfrom)) ||
 #endif
@@ -672,7 +672,7 @@ fail:
 		setpgid (0, getpid ());
 		(void) close(s);
 		(void) close(pv[0]);
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 		if (doencrypt) {
 			close(pv1[0]); close(pv2[0]);
