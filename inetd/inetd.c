@@ -561,7 +561,11 @@ reapchild(signo)
 	struct servtab *sep;
 
 	for (;;) {
+#ifdef HAVE_WAIT3
 		pid = wait3(&status, WNOHANG, (struct rusage *)0);
+#else
+		pid = wait(&status);
+#endif
 		if (pid <= 0)
 			break;
 		if (debug)
