@@ -39,7 +39,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.17 2000/07/19 04:08:38 alainm Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.18 2000/08/09 05:44:24 alainm Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -47,7 +47,6 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 #endif
 
 #include <sys/types.h>
-#include <sys/signal.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #ifdef HAVE_SYS_FILIO_H
