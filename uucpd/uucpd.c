@@ -54,7 +54,9 @@ static char sccsid[] = "@(#)uucpd.c	8.1 (Berkeley) 6/4/93";
 #endif
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

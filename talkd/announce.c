@@ -52,7 +52,9 @@ static char sccsid[] = "@(#)announce.c	8.3 (Berkeley) 4/28/95";
 #  include <time.h>
 # endif
 #endif
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 #include <sys/socket.h>
 #ifdef HAVE_OSOCKADDR_H
 #include <osockaddr.h>

@@ -44,7 +44,9 @@ static char sccsid[] = "@(#)popen.c	8.3 (Berkeley) 4/6/94";
 #endif
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 
 #include <errno.h>
 #include <signal.h>

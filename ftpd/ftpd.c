@@ -70,7 +70,9 @@ char *alloca ();
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 
 #include <netinet/in.h>
 #ifdef HAVE_NETINET_IN_SYSTM_H

@@ -80,9 +80,9 @@
 #endif
 
 #include <sys/socket.h>
-#ifndef	CRAY
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
-#endif	/* CRAY */
+#endif
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/stat.h>
