@@ -60,6 +60,7 @@ void	setproctitle __P((const char *, ...));
 void	statcmd __P((void));
 void	statfilecmd __P((char *));
 void	store __P((char *, char *, int));
+void    toolong __P((int));
 void	upper __P((char *));
 void	user __P((char *));
 void	yyerror __P((char *));

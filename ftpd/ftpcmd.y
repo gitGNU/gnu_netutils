@@ -91,6 +91,7 @@ static char sccsid[] = "@(#)ftpcmd.y	8.3 (Berkeley) 4/6/94";
 #endif
 
 extern	struct sockaddr_in data_dest;
+extern  struct sockaddr_in his_addr;
 extern	int logged_in;
 extern	struct passwd *pw;
 extern	int guest;
@@ -130,7 +131,6 @@ static void	 help __P((struct tab *, char *));
 static struct tab *
 		 lookup __P((struct tab *, char *));
 static void	 sizecmd __P((char *));
-static void	 toolong __P((int));
 static int	 yylex __P((void));
 
 %}
@@ -173,6 +173,8 @@ cmd_list
 	: /* empty */
 	| cmd_list cmd
 		{
+		    	if (fromname != NULL)
+			    free (fromname);
 			fromname = (char *) 0;
 			restart_point = (off_t) 0;
 		}
@@ -188,22 +190,36 @@ cmd
 	| PASS SP password CRLF
 		{
 			pass($3);
+			memset ($3, 0, strlen ($3));
 			free($3);
 		}
-	| PORT SP host_port CRLF
+	| PORT check_login SP host_port CRLF
 		{
 			usedefault = 0;
 			if (pdata >= 0) {
 				(void) close(pdata);
 				pdata = -1;
 			}
-			reply(200, "PORT command successful.");
+#ifndef IPPORT_RESERVED
+# define IPPORT_RESERVED 1023
+#endif
+			if ($2) {
+			    if (memcmp (&his_addr.sin_addr,
+					&data_dest.sin_addr,
+					sizeof (data_dest.sin_addr)) == 0 && 
+					ntohs (data_dest.sin_port) >
+					IPPORT_RESERVED) {
+				reply (200, "PORT command sucessful.");
+			    }
+			    else {
+				memset (&data_dest, 0, sizeof (data_dest));
+				reply(500, "Illegal PORT Command");
+			    }
+			}
 		}
-/* telnet to ftpd and type PASV, server will crash
- * *Hobbit
- */
 	| PASV check_login CRLF
 		{
+		    if ($2)
 			passive();
 		}
 	| TYPE SP type_code CRLF
@@ -336,16 +352,18 @@ cmd
 			if ($4 != NULL)
 				free($4);
 		}
-	| RNTO SP pathname CRLF
+	| RNTO check_login SP pathname CRLF
 		{
+		    if ($2) {
 			if (fromname) {
-				renamecmd(fromname, $3);
+				renamecmd(fromname, $4);
 				free(fromname);
 				fromname = (char *) 0;
 			} else {
 				reply(503, "Bad sequence of commands.");
 			}
-			free($3);
+		    }
+		    free ($4);
 		}
 	| ABOR CRLF
 		{
@@ -381,6 +399,8 @@ cmd
 					help(sitetab, (char *) 0);
 			} else
 				help(cmdtab, $3);
+			if ($3 != NULL)
+			    free ($3);
 		}
 	| NOOP CRLF
 		{
@@ -417,6 +437,8 @@ cmd
 	| SITE SP HELP SP STRING CRLF
 		{
 			help(sitetab, $5);
+			if ($5 != NULL)
+			    free ($5);
 		}
 	| SITE SP UMASK check_login CRLF
 		{
@@ -463,23 +485,20 @@ cmd
 			    "Current IDLE time limit is %d seconds; max %d",
 				timeout, maxtimeout);
 		}
-	| SITE SP IDLE SP NUMBER CRLF
+	| SITE SP check_login IDLE SP NUMBER CRLF
 		{
-		  	if (!guest && $5 == 0) {
-			  timeout = 0;
-			  alarm (0);
-			  reply (200, "IDLE time limit disabled");
-			}
-			if ($5 < 30 || $5 > maxtimeout) {
-				reply(501,
+		    	if ($3) {
+			    if ($6 < 30 || $6 > maxtimeout) {
+				reply (501,
 			"Maximum IDLE time must be between 30 and %d seconds",
-				    maxtimeout);
-			} else {
-				timeout = $5;
+					maxtimeout);
+			    } else {
+				timeout = $6;
 				(void) alarm((unsigned) timeout);
 				reply(200,
-				    "Maximum IDLE time set to %d seconds",
-				    timeout);
+					"Maximum IDLE time set to %d seconds",
+					timeout);
+			    }
 			}
 		}
 	| STOU check_login SP pathname CRLF
@@ -565,9 +584,10 @@ cmd
 					struct tm *t;
 					t = gmtime(&stbuf.st_mtime);
 					reply(213,
-					    "19%02d%02d%02d%02d%02d%02d",
-					    t->tm_year, t->tm_mon+1, t->tm_mday,
-					    t->tm_hour, t->tm_min, t->tm_sec);
+					    "%04d%02d%02d%02d%02d%02d",
+					    1900 + t->tm_year, t->tm_mon+1,
+					    t->tm_mday, t->tm_hour, t->tm_min,
+					    t->tm_sec);
 				}
 			}
 			if ($4 != NULL)
@@ -590,14 +610,17 @@ rcmd
 
 			restart_point = (off_t) 0;
 			if ($2 && $4) {
-				fromname = renamefrom($4);
-				if (fromname == (char *) 0 && $4) {
-					free($4);
-				}
+			    if (fromname != NULL)
+				free (fromname);
+			    fromname = renamefrom($4);
 			}
+			if (fromname == (char *) 0 && $4)
+			    free($4);
 		}
 	| REST SP byte_size CRLF
 		{
+		    	if (fromname != NULL)
+				free (fromname);
 			fromname = (char *) 0;
 			restart_point = $3;	/* XXX $3 is only "int" */
 			reply(350,
@@ -949,7 +972,7 @@ telnet_fgets(s, n, iop)
 			break;
 	}
 	if (c == EOF && cs == s)
-		return (NULL);
+	    return (NULL);
 	*cs++ = '\0';
 	if (debug) {
 		if (!guest && strncasecmp("pass ", s, 5) == 0) {
@@ -972,7 +995,7 @@ telnet_fgets(s, n, iop)
 	return (s);
 }
 
-static void
+void
 toolong(signo)
 	int signo;
 {
