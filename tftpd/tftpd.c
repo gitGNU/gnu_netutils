@@ -496,11 +496,11 @@ send_data:
 				goto abort;
 
 			if (ap->th_opcode == ACK) {
-				if (ap->th_block == block)
+				if ((u_short)ap->th_block == (u_short)block)
 					break;
 				/* Re-synchronize with the other side */
 				(void) synchnet(peer);
-				if (ap->th_block == (block -1))
+				if ((u_short)ap->th_block == (u_short)(block -1))
 					goto send_data;
 			}
 
