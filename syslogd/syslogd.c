@@ -1133,9 +1133,6 @@ cfline(line, f)
 		hp = gethostbyname(p);
 		if (hp == NULL) {
 			extern int h_errno;
-#ifndef HAVE_HSTRERROR_DECL
-			extern char *hstrerror __P((int));
-#endif
 			logerror(hstrerror(h_errno));
 			break;
 		}
