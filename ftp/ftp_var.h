@@ -95,7 +95,12 @@ FTP_EXTERN struct servent *sp;	/* service spec for tcp/ftp */
 
 FTP_EXTERN jmp_buf toplevel;	/* non-local goto stuff for cmd scanner */
 
+#if HAVE_LIBREADLINE
+FTP_EXTERN char *line;
+#else
 FTP_EXTERN char	line[200];	/* input line buffer */
+#endif
+
 FTP_EXTERN char	*stringbase;	/* current scan point in line buffer */
 FTP_EXTERN char	argbuf[200];	/* argument storage buffer */
 FTP_EXTERN char	*argbase;	/* current storage point in arg buffer */
