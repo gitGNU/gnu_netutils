@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,7 +39,7 @@ static char sccsid[] = "@(#)rsh.c	8.4 (Berkeley) 4/29/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/rsh/rsh.c,v $
- * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.15 2000/03/15 06:32:45 jbailey Exp $
+ * $Header: /sources/inetutils/inetutils/rsh/rsh.c,v 1.16 2000/07/06 04:21:08 alainm Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -129,7 +125,7 @@ static struct option long_options[] =
   { 0 }
 };
 
-static void 
+static void
 pusage (stream)
 FILE *stream;
 {
@@ -414,7 +410,7 @@ try_connect:
 	sigaddset(&sigs, SIGQUIT);
 	sigaddset(&sigs, SIGTERM);
 	sigprocmask(SIG_BLOCK, &sigs, &osigs);
-#else	
+#else
 	sigs = sigmask (SIGINT) | sigmask (SIGQUIT) | sigmask (SIGTERM);
 	osigs = sigblock (sigs);
 #endif
@@ -467,7 +463,7 @@ reread:		errno = 0;
 			goto done;
 		bp = buf;
 
-rewrite:	
+rewrite:
 		FD_ZERO(&rembits);
 		FD_SET(rem, &rembits);
 		if (select(rem + 1, 0, &rembits, 0, 0) < 0) {

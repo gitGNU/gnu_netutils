@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -584,7 +580,7 @@ fb64_stream_key(key, stp)
  *  INPUT --(--------->(+)+---> DATA
  *          |             |
  *	    +-------------+
- *         
+ *
  *
  * Given:
  *	iV: Initial vector, 64 bits (8 bytes) long.
@@ -645,7 +641,7 @@ cfb64_decrypt(data)
 		des_ecb_encrypt(stp->str_output, b, stp->str_sched, 1);
 		memmove((void *)stp->str_feed, (void *)b, sizeof(Block));
 		stp->str_index = 1;	/* Next time will be 1 */
-		index = 0;		/* But now use 0 */ 
+		index = 0;		/* But now use 0 */
 	}
 
 	/* On decryption we store (data) which is cypher. */
@@ -718,7 +714,7 @@ ofb64_decrypt(data)
 		des_ecb_encrypt(stp->str_feed, b, stp->str_sched, 1);
 		memmove((void *)stp->str_feed, (void *)b, sizeof(Block));
 		stp->str_index = 1;	/* Next time will be 1 */
-		index = 0;		/* But now use 0 */ 
+		index = 0;		/* But now use 0 */
 	}
 
 	return(data ^ stp->str_feed[index]);

@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -36,7 +32,7 @@ static char sccsid[] = "@(#)encrypt.c	8.2 (Berkeley) 5/30/95";
 #endif /* not lint */
 
 /*
- * Copyright (C) 1990 by the Massachusetts Institute of Technology
+ * Copyright (C) 1990, 2000 by the Massachusetts Institute of Technology
  *
  * Export of this software from the United States of America is assumed
  * to require a specific license from the United States Government.
@@ -110,7 +106,7 @@ static long remote_supports_decrypt = 0;
 static Encryptions encryptions[] = {
 #ifdef	DES_ENCRYPTION
     { "DES_CFB64",	ENCTYPE_DES_CFB64,
-			cfb64_encrypt,	
+			cfb64_encrypt,
 			cfb64_decrypt,
 			cfb64_init,
 			cfb64_start,
@@ -120,7 +116,7 @@ static Encryptions encryptions[] = {
 			cfb64_keyid,
 			cfb64_printsub },
     { "DES_OFB64",	ENCTYPE_DES_OFB64,
-			ofb64_encrypt,	
+			ofb64_encrypt,
 			ofb64_decrypt,
 			ofb64_init,
 			ofb64_start,
@@ -712,7 +708,7 @@ encrypt_request_end()
  * Called when ENCRYPT REQUEST-START is received.  If we receive
  * this before a type is picked, then that indicates that the
  * other side wants us to start encrypting data as soon as we
- * can. 
+ * can.
  */
 	void
 encrypt_request_start(data, cnt)
@@ -856,7 +852,7 @@ encrypt_start_output(type)
 		i = (*ep->start)(DIR_ENCRYPT, Server);
 		if (encrypt_debug_mode) {
 			printf(">>>%s: Encrypt start: %s (%d) %s\r\n",
-				Name, 
+				Name,
 				(i < 0) ? "failed" :
 					"initial negotiation in progress",
 				i, ENCTYPE_NAME(type));

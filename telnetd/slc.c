@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -113,10 +109,10 @@ get_slc_defaults()
 	init_termbuf();
 
 	for (i = 1; i <= NSLC; i++) {
-		slctab[i].defset.flag = 
+		slctab[i].defset.flag =
 			spcset(i, &slctab[i].defset.val, &slctab[i].sptr);
-		slctab[i].current.flag = SLC_NOSUPPORT; 
-		slctab[i].current.val = 0; 
+		slctab[i].current.flag = SLC_NOSUPPORT;
+		slctab[i].current.val = 0;
 	}
 
 }  /* end of get_slc_defaults */
@@ -290,7 +286,7 @@ change_slc(func, flag, val)
 	register cc_t val;
 {
 	register int hislevel, mylevel;
-	
+
 	hislevel = flag & SLC_LEVELBITS;
 	mylevel = slctab[func].defset.flag & SLC_LEVELBITS;
 	/*
@@ -349,7 +345,7 @@ change_slc(func, flag, val)
 		* request as he asks.
 		*
 		* If our level is DEFAULT, then just ack whatever was
-		* sent. 
+		* sent.
 		*
 		* If he can't change and we can't change,
 		* then degenerate to NOSUPPORT.

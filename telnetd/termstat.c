@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -324,7 +320,7 @@ localstat()
 			nfrontp += 7;
 			editmode = useeditmode;
 		}
-							
+
 
 		/*
 		 * Check for changes to special characters in use.
@@ -426,7 +422,7 @@ clientstat(code, parm1, parm2)
 					uselinemode = 1;
 				}
 			}
-		
+
 			/*
 			 * Quit now if we can't do it.
 			 */
@@ -467,7 +463,7 @@ clientstat(code, parm1, parm2)
 				send_will(TELOPT_ECHO, 1);
 		}
 		break;
-	
+
 	case LM_MODE:
 	    {
 		register int ack, changed;
@@ -516,7 +512,7 @@ clientstat(code, parm1, parm2)
  					IAC, SE);
  				nfrontp += 7;
  			}
- 		
+
 			editmode = useeditmode;
 		}
 
@@ -550,9 +546,9 @@ clientstat(code, parm1, parm2)
 		(void) ioctl(pty, TIOCSWINSZ, (char *)&ws);
 	    }
 #endif	/* TIOCSWINSZ */
-		
+
 		break;
-	
+
 	case TELOPT_TSPEED:
 	    {
 		def_tspeed = parm1;
@@ -617,7 +613,7 @@ _termstat()
  *
  * Some things should not be done until after the login process has started
  * and all the pty modes are set to what they are supposed to be.  This
- * function is called when the pty state has been processed for the first time. 
+ * function is called when the pty state has been processed for the first time.
  * It calls other functions that do things that were deferred in each module.
  */
 	void

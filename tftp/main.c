@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -305,7 +301,7 @@ void
 setbinary(argc, argv)
 	int argc;
 	char *argv[];
-{      
+{
 
 	settftpmode("octet");
 }
@@ -392,7 +388,7 @@ put(argc, argv)
 	}
 				/* this assumes the target is a directory */
 				/* on a remote unix system.  hmmmm.  */
-	cp = strchr (targ, '\0'); 
+	cp = strchr (targ, '\0');
 	*cp++ = '/';
 	for (n = 1; n < argc - 1; n++) {
 		strcpy(cp, tail(argv[n]));
@@ -575,7 +571,7 @@ tail(filename)
 	char *filename;
 {
 	register char *s;
-	
+
 	while (*filename) {
 		s = strrchr (filename, '/');
 		if (s == NULL)

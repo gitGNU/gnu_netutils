@@ -10,10 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -184,7 +180,7 @@ init_telnet()
     ClearArray(options);
 
     connected = In3270 = ISend = localflow = donebinarytoggle = 0;
-#if	defined(AUTHENTICATION) || defined(ENCRYPTION) 
+#if	defined(AUTHENTICATION) || defined(ENCRYPTION)
     auth_encrypt_connect(connected);
 #endif	/* defined(AUTHENTICATION) || defined(ENCRYPTION)  */
     restartany = -1;
@@ -696,7 +692,7 @@ mklist(buf, name)
 		else if (islower(c))
 			*cp = toupper(c);
 	}
-	
+
 	/*
 	 * Check for an old V6 2 character name.  If the second
 	 * name points to the beginning of the buffer, and is
@@ -1841,7 +1837,7 @@ telrcv()
 	case TS_IAC:
 process_iac:
 	    switch (c) {
-	    
+
 	    case WILL:
 		telrcv_state = TS_WILL;
 		continue;
@@ -2256,7 +2252,7 @@ telnet(user)
 {
     sys_telnet_init();
 
-#if	defined(AUTHENTICATION) || defined(ENCRYPTION) 
+#if	defined(AUTHENTICATION) || defined(ENCRYPTION)
     {
 	extern char *localhost ();
 	static char *local_host = 0;
