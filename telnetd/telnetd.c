@@ -390,7 +390,11 @@ main(argc, argv)
 	if (debug) {
 	    int s, ns, foo;
 	    struct servent *sp;
+#ifdef HAVE_SOCKADDR_IN_SIN_LEN
+	    static struct sockaddr_in sin = { sizeof (sin), AF_INET };
+#else
 	    static struct sockaddr_in sin = { AF_INET };
+#endif
 
 	    if (argc > 1) {
 		usage();
