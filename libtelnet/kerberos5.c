@@ -1,15 +1,19 @@
 /*
  *	$Source: /sources/inetutils/inetutils/libtelnet/kerberos5.c,v $
  *	$Author: miles $
- *	$Id: kerberos5.c,v 1.2 1996/02/12 18:55:00 miles Exp $
+ *	$Id: kerberos5.c,v 1.3 1996/07/22 04:05:06 miles Exp $
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #if !defined(lint) && !defined(SABER)
 static
 #ifdef __STDC__
 const
 #endif
-char rcsid_kerberos5_c[] = "$Id: kerberos5.c,v 1.2 1996/02/12 18:55:00 miles Exp $";
+char rcsid_kerberos5_c[] = "$Id: kerberos5.c,v 1.3 1996/07/22 04:05:06 miles Exp $";
 #endif /* lint */
 
 /*-
