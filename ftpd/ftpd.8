@@ -9,6 +9,10 @@
 .\" 2. Redistributions in binary form must reproduce the above copyright
 .\"    notice, this list of conditions and the following disclaimer in the
 .\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
 .\" 4. Neither the name of the University nor the names of its contributors
 .\"    may be used to endorse or promote products derived from this software
 .\"    without specific prior written permission.
@@ -25,21 +29,20 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)ftpd.8	8.3 (Berkeley) 6/1/94
+.\"     @(#)ftpd.8	8.2 (Berkeley) 4/19/94
 .\"
-.Dd June 1, 1994
+.Dd April 19, 1994
 .Dt FTPD 8
 .Os BSD 4.2
 .Sh NAME
 .Nm ftpd
 .Nd
-Internet File Transfer Protocol server 
+Internet File Transfer Protocol server
 .Sh SYNOPSIS
 .Nm ftpd
-.Op Fl dlADq
+.Op Fl dl
 .Op Fl T Ar maxtimeout
 .Op Fl t Ar timeout
-.Op Fl a Ar login-name
 .Sh DESCRIPTION
 .Nm Ftpd
 is the
@@ -55,22 +58,14 @@ service specification; see
 Available options:
 .Bl -tag -width Ds
 .It Fl d
-Debugging information is written to the syslog 
-using LOG_FTP.
+Debugging information is written to the syslog using LOG_FTP.
 .It Fl l
-Each successful and failed
+Each successful and failed 
 .Xr ftp 1
 session is logged using syslog with a facility of LOG_FTP.
 If this option is specified twice, the retrieve (get), store (put), append,
 delete, make directory, remove directory and rename operations and
 their filename arguments are also logged.
-.It Fl A 
-Only anonymous login is allowed.
-.It Fl D
-ftpd enters daemon-mode. That allows ftpd to be run without inetd.
-.It Fl q
-Quiet mode. No information about the version of the ftpd is given to the 
-client.
 .It Fl T
 A client may also request a different timeout period;
 the maximum period allowed may be set to
@@ -83,10 +78,6 @@ The default limit is 2 hours.
 The inactivity timeout period is set to
 .Ar timeout
 seconds (the default is 15 minutes).
-.It Fl a
-Give anonymous an other 
-.Ar login-name 
-(anonymous and ftpd will still work).
 .El
 .Pp
 The file
@@ -99,7 +90,7 @@ If the file
 .Pa /etc/ftpwelcome
 exists,
 .Nm
-prints it before issuing the
+prints it before issuing the 
 .Dq ready
 message.
 If the file
@@ -191,7 +182,7 @@ This allows users to utilize the metacharacters
 .Dq Li \&*?[]{}~ .
 .Pp
 .Nm Ftpd
-authenticates users according to three rules.
+authenticates users according to three rules. 
 .Pp
 .Bl -enum -offset indent
 .It
@@ -204,7 +195,7 @@ file operations may be performed.
 The login name must not appear in the file
 .Pa /etc/ftpusers .
 .It
-The user must have a standard shell returned by
+The user must have a standard shell returned by 
 .Xr getusershell 3 .
 .It
 If the user name is
@@ -220,10 +211,10 @@ to log in by specifying any password (by convention an email address for
 the user should be used as the password).
 .El
 .Pp
-In the last case,
+In the last case, 
 .Nm ftpd
 takes special measures to restrict the client's access privileges.
-The server performs a
+The server performs a 
 .Xr chroot 2
 to the home directory of the
 .Dq ftp
@@ -237,7 +228,6 @@ subtree be constructed with care, following these rules:
 Make the home directory owned by
 .Dq root
 and unwritable by anyone.
-.ne 1i
 .It Pa ~ftp/bin
 Make this directory owned by
 .Dq root
@@ -254,7 +244,7 @@ The files
 .Xr passwd 5
 and
 .Xr group 5
-must be present for the
+must be present for the 
 .Xr ls
 command to be able to produce owner names rather than numbers.
 The password field in

@@ -10,6 +10,10 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -49,19 +53,27 @@
  * or implied warranty.
  */
 
-#ifndef __MISC_PROTO__
-# define __MISC_PROTO__
+#ifndef	__MISC_PROTO__
+#define	__MISC_PROTO__
 
-void auth_encrypt_init (char *, char *, char *, int);
-void auth_encrypt_connect (int);
-void printd (unsigned char *, int);
+#if	!defined(P)
+#ifdef	__STDC__
+#define	P(x)	x
+#else
+#define	P(x)	()
+#endif
+#endif
+
+void auth_encrypt_init P((char *, char *, char *, int));
+void auth_encrypt_connect P((int));
+void printd P((unsigned char *, int));
 
 /*
  * These functions are imported from the application
  */
-int net_write (unsigned char *, int);
-void net_encrypt (void);
-int telnet_spin (void);
-char *telnet_getenv (char *);
-char *telnet_gets (char *, char *, int, int);
+int net_write P((unsigned char *, int));
+void net_encrypt P((void));
+int telnet_spin P((void));
+char *telnet_getenv P((char *));
+char *telnet_gets P((char *, char *, int, int));
 #endif

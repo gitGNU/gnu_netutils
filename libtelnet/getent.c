@@ -10,6 +10,10 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -27,44 +31,38 @@
  * SUCH DAMAGE.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#ifndef lint
+static char sccsid[] = "@(#)getent.c	8.2 (Berkeley) 12/15/93";
+#endif /* not lint */
 
-#ifdef HAVE_CGETENT
 static char *area;
-#endif
 
-int
-getent (char *cp, char *name)
+/*ARGSUSED*/
+getent(cp, name)
+char *cp, *name;
 {
-#ifdef	HAVE_CGETENT
-  char *dba[2];
-#endif
-  (void) cp;
-  (void) name;			/* shutup gcc */
-#ifdef	HAVE_CGETENT
-  dba[0] = "/etc/gettytab";
-  dba[1] = 0;
-  return ((cgetent (&area, dba, name) == 0) ? 1 : 0);
+#ifdef	HAS_CGETENT
+	char *dba[2];
+
+	dba[0] = "/etc/gettytab";
+	dba[1] = 0;
+	return((cgetent(&area, dba, name) == 0) ? 1 : 0);
 #else
-  return (0);
+	return(0);
 #endif
 }
 
-#ifndef SOLARIS
+#ifndef	SOLARIS
+/*ARGSUSED*/
 char *
-getstr (char *id, char **cpp)
+getstr(id, cpp)
+char *id, **cpp;
 {
-# ifdef	HAVE_CGETENT
-  char *answer;
-# endif
-  (void) id;
-  (void) cpp;			/* shutup gcc */
-# ifdef	HAVE_CGETENT
-  return ((cgetstr (area, id, &answer) > 0) ? answer : 0);
+# ifdef	HAS_CGETENT
+	char *answer;
+	return((cgetstr(area, id, &answer) > 0) ? answer : 0);
 # else
-  return (0);
+	return(0);
 # endif
 }
 #endif

@@ -9,6 +9,10 @@
 .\" 2. Redistributions in binary form must reproduce the above copyright
 .\"    notice, this list of conditions and the following disclaimer in the
 .\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
 .\" 4. Neither the name of the University nor the names of its contributors
 .\"    may be used to endorse or promote products derived from this software
 .\"    without specific prior written permission.
@@ -25,9 +29,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)inetd.8	8.4 (Berkeley) 6/1/94
+.\"     @(#)inetd.8	8.3 (Berkeley) 4/13/94
 .\"
-.Dd October 21, 2006
+.Dd April 13, 1994
 .Dt INETD 8
 .Os BSD 4.4
 .Sh NAME
@@ -38,9 +42,7 @@
 .Nm inetd
 .Op Fl d
 .Op Fl R Ar rate
-.Op Fl -environment
-.Op Fl -resolve
-.Op Ar configuration_files ...
+.Op Ar configuration file
 .Sh DESCRIPTION
 The
 .Nm inetd
@@ -67,62 +69,50 @@ reducing load on the system.
 The options available for
 .Nm inetd:
 .Bl -tag -width Ds
-.It Fl d, -debug
+.It Fl d
 Turns on debugging.
-.It Fl -environment
-Pass local and remote address data via environment variables. See
-\fBENVIRONMENT\fP below.
-.It Fl R, -rate Ar rate
+.It Fl R Ar rate
 Specifies the maximum number of times a service can be invoked
 in one minute; the default is 1000.
-.It Fl -resolve
-Resolve local and remote IP addresses and pass them to the server program
-via \fBTCPLOCALHOST\fP and \fBTCPREMOTEHOST\fP environment variables. See
-\fBENVIRONMENT\fP below. This option implies \fB--environment\fP.
-.It Fl -version
-Shows the version.
-.It Fl -help
-Shows the help.
 .El
 .Pp
 Upon execution,
 .Nm inetd
 reads its configuration information from a configuration
-file on the command line, by default,
-.Pa /etc/inetd.conf and /etc/inetd.d .
-If the configuration pathname is a directory, all the files in the
-directory are read like a configuration file. All of the configuration
-files are read and merged.  There must be an entry for each field in
-the configuration file, with entries for each field separated by a tab
-or a space.  Comments are denoted by a ``#'' at the beginning of a
-line.  The fields of the configuration file are as follows:
+file which, by default, is
+.Pa /etc/inetd.conf .
+There must be an entry for each field of the configuration
+file, with entries for each field separated by a tab or
+a space.  Comments are denoted by a ``#'' at the beginning
+of a line.  There must be an entry for each field.  The
+fields of the configuration file are as follows:
 .Pp
 .Bd -unfilled -offset indent -compact
 service name
 socket type
 protocol
-wait/nowait[.max]
+wait/nowait
 user
 server program
 server program arguments
 .Ed
 .Pp
-There are two types of services that
+There are two types of services that 
 .Nm inetd
 can start: standard and TCPMUX.
 A standard service has a well-known port assigned to it;
 it may be a service that implements an official Internet standard or is a
 BSD-specific service.
-As described in
+As described in 
 .Tn RFC 1078 ,
-TCPMUX services are nonstandard services that do not have a
+TCPMUX services are nonstandard services that do not have a 
 well-known port assigned to them.
 They are invoked from
-.Nm inetd
+.Nm inetd 
 when a program connects to the
 .Dq tcpmux
 well-known port and specifies
-the service name.
+the service name.  
 This feature is useful for adding locally-developed servers.
 .Pp
 The
@@ -142,10 +132,10 @@ For TCPMUX services, the value of the
 field consists of the string
 .Dq tcpmux
 followed by a slash and the
-locally-chosen service name.
-The service names listed in
+locally-chosen service name. 
+The service names listed in 
 .Pa /etc/services
-and the name
+and the name 
 .Dq help
 are reserved.
 Try to choose unique names for your TCPMUX services by prefixing them with
@@ -162,7 +152,7 @@ or
 .Dq seqpacket ,
 depending on whether the socket is a stream, datagram, raw,
 reliably delivered message, or sequenced packet socket.
-TCPMUX services must use
+TCPMUX services must use 
 .Dq stream .
 .Pp
 The
@@ -173,11 +163,11 @@ Examples might be
 .Dq tcp
 or
 .Dq udp .
-TCPMUX services must use
+TCPMUX services must use 
 .Dq tcp .
 .Pp
 The
-.Em wait/nowait[.max]
+.Em wait/nowait
 entry specifies whether the server that is invoked by inetd will take over
 the socket associated with the service access point, and thus whether
 .Nm inetd
@@ -229,20 +219,8 @@ are started with the listening service socket, and must accept
 at least one connection request before exiting.
 Such a server would normally accept and process incoming connection
 requests until a timeout.
-TCPMUX services must use
+TCPMUX services must use 
 .Dq nowait .
-.Pp
-The optional
-.Dq max
-suffix (separated from
-.Dq wait
-or
-.Dq nowait
-by a dot) is a decimal number that specifies the maximum number of server
-instances that may be spawned from
-.Nm inetd
-within an interval of 60 seconds.  It overrides the settings of the
-\fB-R\fP command line option. 
 .Pp
 The
 .Em user
@@ -300,7 +278,7 @@ Services may be added, deleted or modified when the configuration file
 is reread.
 .Sh TCPMUX
 .Pp
-.Tn RFC 1078
+.Tn RFC 1078 
 describes the TCPMUX protocol:
 ``A TCP client connects to a foreign host on TCP port 1.  It sends the
 service name followed by a carriage-return line-feed <CRLF>.  The
@@ -323,31 +301,6 @@ causes
 .Nm inetd
 to list TCPMUX services in
 .Pa inetd.conf .
-.ne 1i
-.Sh "ENVIRONMENT"
-If a connection is made with a streaming protocol (TCP) and if
-\fB--environment\fP option has been given, inetd will set
-the following environment variables before starting the program:
-.Pp
-\fBPROTO\fP: always "TCP".
-.Pp
-\fBTCPLOCALIP\fP: the local IP address of the interface which accepted the connection.
-.Pp
-\fBTCPLOCALPORT\fP: the port number on which the TCP connection was established.
-.Pp
-\fBTCPREMOTEIP\fP: the IP address of the remote client.
-.Pp
-\fBTCPREMOTEPORT\fP: the port number on the client side of the TCP connection.
-
-.Pp
-In addition, if given the \fB--remote\fP option,
-.Nm inetd
-will set the following environment variables:
-.Pp
-\fBTCPLOCALHOST\fP: the DNS name of \fITCPLOCALIP\fR.
-.Pp
-\fBTCPREMOTEHOST\fP: the DNS name of \fITCPREMOTEIP\fR.
-
 .Sh "EXAMPLES"
 .Pp
 Here are several example service entries for the various types of services:
@@ -378,7 +331,7 @@ a 'denial of service' attack, or
 4) the invoked service program has an error that causes clients
 to retry quickly.
 Use the
-.Op Fl R
+.Op Fl R 
 option,
 as described above, to change the rate limit.
 Once the limit is reached, the service will be
@@ -388,9 +341,9 @@ reenabled automatically in 10 minutes.
 \fIservice\fP/\fIprotocol\fP: No such user '\fIuser\fP', service ignored
 \fIservice\fP/\fIprotocol\fP: getpwnam: \fIuser\fP: No such user
 .Ed
-No entry for
+No entry for 
 .Em user
-exists in the
+exists in the 
 .Pa passwd
 file. The first message
 occurs when
@@ -402,7 +355,7 @@ service is invoked.
 \fIservice\fP: can't set uid \fInumber\fP
 \fIservice\fP: can't set gid \fInumber\fP
 .Ed
-The user or group ID for the entry's
+The user or group ID for the entry's 
 .Em user
 is invalid.
 .Sh SEE ALSO
@@ -414,9 +367,6 @@ is invalid.
 .Xr rshd 8 ,
 .Xr telnetd 8 ,
 .Xr tftpd 8
-.Sh BUGS
-The environment variables (see \fBENVIRONMENT\fP) are set only for
-TCP IPv4 nowait connections.
 .Sh HISTORY
 The
 .Nm

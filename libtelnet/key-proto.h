@@ -10,6 +10,10 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -49,10 +53,19 @@
  * or implied warranty.
  */
 
-#ifndef __KEY_PROTO__
-# define __KEY_PROTO__
-int key_file_exists (void);
-void key_lookup (unsigned char *, Block);
-void key_stream_init (Block, Block, int);
-unsigned char key_stream (int, int);
+#ifndef	__KEY_PROTO__
+#define	__KEY_PROTO__
+
+#if	!defined(P)
+#ifdef	__STDC__
+#define	P(x)	x
+#else
+#define	P(x)	()
+#endif
+#endif
+
+int key_file_exists P((void));
+void key_lookup P((unsigned char *, Block));
+void key_stream_init P((Block, Block, int));
+unsigned char key_stream P((int, int));
 #endif
