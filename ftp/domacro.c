@@ -42,7 +42,7 @@ static char sccsid[] = "@(#)domacro.c	8.3 (Berkeley) 4/2/94";
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 
 #include "ftp_var.h"
 
