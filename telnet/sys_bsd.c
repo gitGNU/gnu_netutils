@@ -593,18 +593,24 @@ TerminalNewMode(f)
 #ifndef	USE_TERMIO
 	if (f & MODE_OUTBIN)
 		lmode |= LLITOUT;
+#if 0 /* If not in binary mode, still allow all 8-bits.  */
 	else
 		lmode &= ~LLITOUT;
+#endif
 
 	if (f & MODE_INBIN)
 		lmode |= LPASS8;
+#if 0 /* If not in binary mode, still allow all 8-bits.  */
 	else
 		lmode &= ~LPASS8;
+#endif
 #else
 	if (f & MODE_INBIN)
 		tmp_tc.c_iflag &= ~ISTRIP;
+#if 0 /* If not in binary mode, still allow all 8-bits.  */
 	else
 		tmp_tc.c_iflag |= ISTRIP;
+#endif
 	if (f & MODE_OUTBIN) {
 		tmp_tc.c_cflag &= ~(CSIZE|PARENB);
 		tmp_tc.c_cflag |= CS8;
