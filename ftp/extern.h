@@ -151,7 +151,3 @@ extern int	proxy;
 extern char	reply_string[];
 extern off_t	restart_point;
 extern int	NCMDS;
-
-#ifndef HAVE_GETPASS_DECL
-extern char *getpass __P((const char *));
-#endif
