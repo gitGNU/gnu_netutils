@@ -109,8 +109,6 @@ static char sccsid[] = "@(#)rlogin.c	8.4 (Berkeley) 4/29/95";
 #include <kerberosIV/des.h>
 #include <kerberosIV/krb.h>
 
-#include "krb.h"
-
 CREDENTIALS cred;
 Key_schedule schedule;
 int use_kerberos = 1, doencrypt;
@@ -250,7 +248,7 @@ main(argc, argv)
 		case 'l':
 			user = optarg;
 			break;
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 		case 'x':
 			doencrypt = 1;
@@ -342,7 +340,7 @@ try_connect:
 		if (dest_realm == NULL)
 			dest_realm = krb_realmofhost(host);
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		if (doencrypt)
 			rem = krcmd_mutual(&host, sp->s_port, user, term, 0,
 			    dest_realm, &cred, schedule);
@@ -362,7 +360,7 @@ try_connect:
 			goto try_connect;
 		}
 	} else {
-#ifdef CRYPT
+#ifdef ENCRYPTION
 		if (doencrypt)
 			errx(1, "the -x flag requires Kerberos authentication.");
 #endif /* CRYPT */
@@ -597,7 +595,7 @@ writer()
 				continue;
 			}
 			if (c != escapechar)
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 				if (doencrypt)
 					(void)des_write(rem,
@@ -608,7 +606,7 @@ writer()
 					(void)write(rem, &escapechar, 1);
 		}
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 		if (doencrypt) {
 			if (des_write(rem, &c, 1) == 0) {
@@ -703,7 +701,7 @@ sendwindow()
 	wp->ws_xpixel = htons(winsize.ws_xpixel);
 	wp->ws_ypixel = htons(winsize.ws_ypixel);
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 	if(doencrypt)
 		(void)des_write(rem, obuf, sizeof(obuf));
@@ -850,7 +848,7 @@ reader(smask)
 		rcvcnt = 0;
 		rcvstate = READING;
 
-#ifdef CRYPT
+#ifdef ENCRYPTION
 #ifdef KERBEROS
 		if (doencrypt)
 			rcvcnt = des_read(rem, rcvbuf, sizeof(rcvbuf));
@@ -958,7 +956,7 @@ usage()
 	(void)fprintf(stderr,
 	    "usage: rlogin [ -%s]%s[-e char] [ -l username ] [username@]host\n",
 #ifdef KERBEROS
-#ifdef CRYPT
+#ifdef ENCRYPTION
 	    "8EKLx", " [-k realm] ");
 #else
 	    "8EKL", " [-k realm] ");
