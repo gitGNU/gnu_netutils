@@ -370,7 +370,7 @@ fatalperror(f, msg)
 	int f;
 	char *msg;
 {
-	char buf[BUFSIZ], *strerror();
+	char buf[BUFSIZ];
 
 	snprintf (buf, sizeof buf, "%s: %s", msg, strerror(errno));
 	fatal(f, buf);
