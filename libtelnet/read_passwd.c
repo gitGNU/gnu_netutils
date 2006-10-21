@@ -33,7 +33,7 @@ static char sccsid[] = "@(#)read_passwd.c	8.3 (Berkeley) 5/30/95";
 
 /*
  * $Source: /sources/inetutils/inetutils/libtelnet/read_passwd.c,v $
- * $Author: alainm $
+ * $Author: ams $
  *
  * Copyright 1985, 1986, 1987, 1988 by the Massachusetts Institute
  * of Technology.
@@ -101,15 +101,15 @@ local_des_read_pw_string(s,max,prompt,verify)
     if (ioctl(0,TIOCSETP,(char *)&tty_state) == -1)
 	return -1;
     while (!ok) {
-	(void) printf("%s",prompt);
-	(void) fflush(stdout);
+	 printf("%s",prompt);
+	 fflush(stdout);
 	while (!fgets(s, max, stdin));
 
 	if ((ptr = strchr(s, '\n')))
 	    *ptr = '\0';
 	if (verify) {
 	    printf("\nVerifying, please re-enter %s",prompt);
-	    (void) fflush(stdout);
+	     fflush(stdout);
 	    if (!fgets(key_string, sizeof(key_string), stdin)) {
 		clearerr(stdin);
 		continue;
@@ -118,7 +118,7 @@ local_des_read_pw_string(s,max,prompt,verify)
 	    *ptr = '\0';
 	    if (strcmp(s,key_string)) {
 		printf("\n\07\07Mismatch - try again\n");
-		(void) fflush(stdout);
+		 fflush(stdout);
 		continue;
 	    }
 	}
