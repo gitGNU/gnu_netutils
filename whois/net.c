@@ -35,11 +35,6 @@
    Joel N. Weber II <devnull@gnu.org> made some additional changes.
    Some of Chris's changes don't appear in this version. */
 
-#ifndef lint
-/*static char sccsid[] = "from: @(#)net.c	5.5 (Berkeley) 6/1/90";*/
-static char rcsid[] = "$Id: net.c,v 1.5 2006/10/21 15:24:19 ams Exp $";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

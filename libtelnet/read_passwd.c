@@ -27,14 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)read_passwd.c	8.3 (Berkeley) 5/30/95";
-#endif /* not lint */
-
 /*
- * $Source: /sources/inetutils/inetutils/libtelnet/read_passwd.c,v $
- * $Author: ams $
- *
  * Copyright 1985, 1986, 1987, 1988 by the Massachusetts Institute
  * of Technology.
  *

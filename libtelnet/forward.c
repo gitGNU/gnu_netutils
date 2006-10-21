@@ -1,13 +1,7 @@
 /*
  *    $Source: /sources/inetutils/inetutils/libtelnet/forward.c,v $
- *    $Id: forward.c,v 1.5 2006/10/21 15:24:20 ams Exp $
+ *    $Id: forward.c,v 1.6 2006/10/21 18:08:45 ams Exp $
  */
-
-#ifndef lint
-static char *rcsid_forward_c =
-  "$Id: forward.c,v 1.5 2006/10/21 15:24:20 ams Exp $";
-#endif /* lint */
-#define LIBC_SCCS
 
 /*-
  * Copyright (c) 1993
@@ -37,11 +31,6 @@ static char *rcsid_forward_c =
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef lint
-static char sccsid[] = "@(#)forward.c	8.2 (Berkeley) 5/30/95";
-#endif /* not lint */
-
 
 /* General-purpose forwarding routines. These routines may be put into */
 /* libkrb5.a to allow widespread use */
