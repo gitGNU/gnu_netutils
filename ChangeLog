@@ -1,3 +1,7 @@
+2008-09-11  Debarshi Ray  <rishi@gnu.org>
+
+	* bootstrap.conf (gnulib_modules): Added `progname'.
+
 2008-08-23  Debarshi Ray  <rishi@gnu.org>
 
 	* hostname/hostname.c (main): Initialize OPTIONS to zero.
