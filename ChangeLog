@@ -1,5 +1,11 @@
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
 
+	* configure.ac (AC_CHECK_TYPE): Removed checks for `socklen_t' and
+	`sa_family_t'.
+	(AC_CHECK_TYPES): Added checks for `socklen_t' and `sa_family_t'.
+	
+2008-09-11  Debarshi Ray  <rishi@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Added `progname'.
 
 2008-08-23  Debarshi Ray  <rishi@gnu.org>

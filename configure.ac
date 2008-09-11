@@ -455,10 +455,14 @@ AC_CHECK_HEADERS([arpa/nameser.h des.h errno.h fcntl.h features.h glob.h \
 dnl Checks return type of signal handlers
 AC_TYPE_SIGNAL
 
-AC_CHECK_TYPE(socklen_t, ,
-              AC_DEFINE(socklen_t, int,
-                        [Define to int if <sys/types.h> does not define],
-              [#include <sys/types.h>]))
+AC_CHECK_TYPES(socklen_t, , AC_DEFINE(socklen_t, int,
+                                      [Define to int if not provided.]),
+    [#ifdef HAVE_SYS_TYPES_H
+     #include <sys/types.h>
+     #endif
+     #ifdef HAVE_SYS_SOCKET_H
+     #include <sys/socket.h>
+     #endif])
 
 dnl We may need our own definition for struct osockaddr (equivalent to the
 dnl old 4.3BSD struct sockaddr, and used in grotty bsd talk protocol)
@@ -488,12 +492,13 @@ AC_CHECK_TYPE(sig_atomic_t, , AC_DEFINE(sig_atomic_t, int, [FIXME]),
   [#include <sys/types.h>
    #include <signal.h> ])
 
-AC_CHECK_TYPE(sa_family_t, , AC_DEFINE(sa_family_t, unsigned int, [FIXME]),
-    [#include <sys/types.h>
-     #ifdef HAVE_SOCKET_H
-     #include <socket.h>
+AC_CHECK_TYPES(sa_family_t, , AC_DEFINE(sa_family_t, unsigned int, [FIXME]),
+    [#ifdef HAVE_SYS_TYPES_H
+     #include <sys/types.h>
      #endif
-     #include <sys/socket.h> ])
+     #ifdef HAVE_SYS_SOCKET_H
+     ##include <sys/socket.h>
+     #endif])
 
 dnl Check for termio-related types and defines
 AC_CHECK_TYPES(cc_t, , ,
