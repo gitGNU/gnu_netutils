@@ -1,5 +1,10 @@
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
 
+	* hostname/hostname.c: Include `progname.h'.
+	(main): Call set_program_name.
+
+2008-09-11  Debarshi Ray  <rishi@gnu.org>
+
 	* configure.ac (AC_CHECK_TYPE): Removed checks for `socklen_t' and
 	`sa_family_t'.
 	(AC_CHECK_TYPES): Added checks for `socklen_t' and `sa_family_t'.

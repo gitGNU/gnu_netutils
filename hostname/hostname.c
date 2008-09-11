@@ -31,6 +31,7 @@
 #include <netinet/in.h>
 
 #include "libinetutils.h"
+#include "progname.h"
 #include "xalloc.h"
 
 struct _hostname_options
@@ -146,6 +147,7 @@ main (int argc, char *argv[])
   hostname_options options;
 
   memset ((void *) &options, 0, sizeof (options));
+  set_program_name (argv[0]);
 
   /* Parse command line */
   argp_parse (&argp, argc, argv, 0, NULL, (void *) &options);
