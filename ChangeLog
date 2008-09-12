@@ -1,5 +1,13 @@
 2008-09-12  Debarshi Ray  <rishi@gnu.org>
 
+	* bootstrap.conf (gnulib_modules): Added `fts'.
+	* libls/Makefile.am (libls_a_SOURCES): Removed `fts.c'.
+	(noinst_HEADERS): Removed `fts.h'.
+	* libls/fts.c: File removed.
+	* libls/fts.h: Likewise.
+
+2008-09-12  Debarshi Ray  <rishi@gnu.org>
+
 	* traceroute/Makefile.am (INCLUDES): Added `-I$(top_srcdir)/lib'.
 	(LDADD): Added `-L$(top_builddir)/lib -lgnu'.
 
