@@ -1,3 +1,7 @@
+2008-09-12  Debarshi Ray  <rishi@gnu.org>
+
+	* configure.ac (AC_CHECK_TYPES): Typo.
+
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
 
 	* hostname/hostname.c: Include `progname.h'.

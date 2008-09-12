@@ -497,7 +497,7 @@ AC_CHECK_TYPES(sa_family_t, , AC_DEFINE(sa_family_t, unsigned int, [FIXME]),
      #include <sys/types.h>
      #endif
      #ifdef HAVE_SYS_SOCKET_H
-     ##include <sys/socket.h>
+     #include <sys/socket.h>
      #endif])
 
 dnl Check for termio-related types and defines
