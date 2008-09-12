@@ -1,5 +1,10 @@
 2008-09-12  Debarshi Ray  <rishi@gnu.org>
 
+	* traceroute/Makefile.am (INCLUDES): Added `-I$(top_srcdir)/lib'.
+	(LDADD): Added `-L$(top_builddir)/lib -lgnu'.
+
+2008-09-12  Debarshi Ray  <rishi@gnu.org>
+
 	* configure.ac (AC_CHECK_FUNCS): Checks for `group_from_gid',
 	`strmode' and `user_from_uid'.
 	* libls/bsdport.c (strmode, user_from_uid, group_from_gid): Define
