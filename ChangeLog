@@ -1,5 +1,14 @@
 2008-09-12  Debarshi Ray  <rishi@gnu.org>
 
+	* configure.ac (AC_CHECK_FUNCS): Checks for `group_from_gid',
+	`strmode' and `user_from_uid'.
+	* libls/bsdport.c (strmode, user_from_uid, group_from_gid): Define
+	only if respective HAVE_functions are undefined.
+	* libls/bsdport.h (strmode, user_from_uid, group_from_gid): Likewise
+	for the declarations.
+
+2008-09-12  Debarshi Ray  <rishi@gnu.org>
+
 	* configure.ac (AC_CHECK_TYPES): Typo.
 
 2008-09-11  Debarshi Ray  <rishi@gnu.org>

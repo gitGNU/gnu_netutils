@@ -9,6 +9,8 @@
 
 # include "bsdport.h"
 
+#ifndef HAVE_STRMODE
+
 void
 strmode (mode_t mode, char *bp)
 {
@@ -109,6 +111,10 @@ strmode (mode_t mode, char *bp)
   bp[11] = 0;
 }
 
+#endif /* !HAVE_STRMODE */
+
+#ifndef HAVE_USER_FROM_UID
+
 char *
 user_from_uid (uid_t uid, int ignored)
 {
@@ -125,6 +131,10 @@ user_from_uid (uid_t uid, int ignored)
     }
 }
 
+#endif /* !HAVE_USER_FROM_UID */
+
+#ifndef HAVE_GROUP_FROM_GID
+
 char *
 group_from_gid (gid_t gid, int ignored)
 {
@@ -140,3 +150,5 @@ group_from_gid (gid_t gid, int ignored)
       return buf;
     }
 }
+
+#endif /* !HAVE_GROUP_FROM_GID */

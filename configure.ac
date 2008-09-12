@@ -569,13 +569,15 @@ AC_FUNC_REALLOC
 
 AC_CHECK_FUNCS(bcopy bcmp bzero cfsetspeed cgetent dirfd fchdir flock \
                fpathconf ftruncate \
-	       getcwd getmsg getspnam initgroups initsetproctitle killpg \
+	       getcwd getmsg getspnam group_from_gid \
+               initgroups initsetproctitle killpg \
                mkstemp ptsname \
                setegid seteuid setpgid \
                setsid setregid setreuid setresgid setresuid setutent_r \
-               sigaction sigvec strchr setproctitle tcgetattr tzset utimes \
+               sigaction sigvec strchr strmode setproctitle \
+               tcgetattr tzset utimes \
                utime uname \
-               updwtmp updwtmpx vhangup wait3 wait4)
+               updwtmp updwtmpx user_from_uid vhangup wait3 wait4)
 
 dnl Functions that we will define if necessary.
 AC_REPLACE_FUNCS(getpass getusershell memcmp memcpy memmove memset \
