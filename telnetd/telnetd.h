@@ -324,11 +324,26 @@ extern void tty_tspeed (int);
 
 extern char *expand_line (const char *fmt);
 
+/* Utility functions */
+extern int getterminaltype (char *user_name);
+extern int net_buffer_is_full (void);
+extern int net_get_char (int peek);
+extern int net_input_level (void);
+extern void net_output_byte (int c);
+extern int net_output_level (void);
+extern int net_read (void);
+extern int pty_get_char (int peek);
+extern int pty_input_level (void);
+extern int pty_input_putback (const char *str, size_t len);
+extern int pty_output_level (void);
+extern int pty_read (void);
+extern int terminaltypeok (char *s);
+
 /*  FIXME */
 extern void _termstat (void);
 extern void add_slc (char func, char flag, cc_t val);
 extern void check_slc (void);
-extern void change_slc (char func, char flag, cc_t val);
+extern void change_slc (int func, char flag, cc_t val);
 
 extern void cleanup (int);
 extern void clientstat (int, int, int);
@@ -355,7 +370,7 @@ extern void send_wont (int, int);
 extern void set_termbuf (void);
 extern void start_login (char *, int, char *);
 extern void start_slc (int);
-extern void start_slave (char *, int, char *);
+extern int start_slave (char *, int, char *);
 
 extern void suboption (void);
 extern void telrcv (void);

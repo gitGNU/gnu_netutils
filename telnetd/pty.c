@@ -18,6 +18,12 @@
    Fifth Floor, Boston, MA 02110-1301 USA. */
 
 #include "telnetd.h"
+#include <pty.h>
+
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+
 #include <sys/wait.h>
 
 #ifdef AUTHENTICATION
@@ -34,7 +40,7 @@ setup_utmp (char *line)
 
 
 int
-startslave (char *host, int autologin, char *autoname)
+start_slave (char *host, int autologin, char *autoname)
 {
   pid_t pid;
   int master;

@@ -28,6 +28,7 @@
  */
 
 #include "telnetd.h"
+#include <ctype.h>
 #include <stdarg.h>
 
 /* Format lines for corresponing commands */

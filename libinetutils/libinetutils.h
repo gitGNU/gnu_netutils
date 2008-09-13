@@ -19,6 +19,7 @@
 #include "config.h"
 
 void utmp_init (char *line, char *user, char *id);
+void utmp_logout (char *line);
 char *utmp_ptsid (char *line, char *tag);
 char *localhost (void);
 void logwtmp (const char *, const char *, const char *);

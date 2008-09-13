@@ -443,7 +443,7 @@ telnetd_setup (int fd)
   setenv ("TERM", terminaltype ? terminaltype : "network", 1);
   if (uname[0])
     user_name = xstrdup (uname);
-  pty = startslave (remote_hostname, level, user_name);
+  pty = start_slave (remote_hostname, level, user_name);
 
 #ifndef HAVE_STREAMSPTY
   /* Turn on packet mode */

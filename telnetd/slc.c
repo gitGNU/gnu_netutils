@@ -284,7 +284,7 @@ process_slc (register unsigned char func, register unsigned char flag,
  * Compare client's request with what we are capable of supporting.
  */
 void
-change_slc (register char func, register char flag, register cc_t val)
+change_slc (register int func, register char flag, register cc_t val)
 {
   register int hislevel, mylevel;
 
