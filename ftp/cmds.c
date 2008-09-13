@@ -65,6 +65,17 @@
 # endif
 #endif
 #include <unistd.h>
+
+#if HAVE_LIBREADLINE
+# include <readline/readline.h>
+#else
+# include "readline.h"
+#endif
+
+#if HAVE_LIBHISTORY
+# include <readline/history.h>
+#endif
+
 /* Include glob.h last, because it may define "const" which breaks
    system headers on some platforms. */
 #include <glob.h>

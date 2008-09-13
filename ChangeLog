@@ -1,5 +1,11 @@
 2008-09-12  Debarshi Ray  <rishi@gnu.org>
 
+	* ftp/cmds.c [HAVE_LIBREADLINE]: Include `readline/readline.h',
+	else use gnulib.
+	[HAVE_LIBHISTORY]: Include `readline/history.h'.
+
+2008-09-12  Debarshi Ray  <rishi@gnu.org>
+
 	* bootstrap.conf (gnulib_modules): Added `fts'.
 	* libls/Makefile.am (libls_a_SOURCES): Removed `fts.c'.
 	(noinst_HEADERS): Removed `fts.h'.
