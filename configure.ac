@@ -124,6 +124,7 @@ AC_ISC_POSIX
 ### Checks for programs.
 AC_PROG_CC
 gl_EARLY
+AC_PROG_LIBTOOL
 AC_CHECK_TOOL(AR, ar)
 AC_PATH_PROG(RM, rm, rm)
 AC_PROG_CPP

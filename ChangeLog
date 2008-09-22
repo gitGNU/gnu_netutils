@@ -1,3 +1,7 @@
+2008-09-23  Debarshi Ray  <rishi@gnu.org>
+
+	* configure.ac (AC_PROG_LIBTOOL): New check.
+
 2008-09-13  Debarshi Ray  <rishi@gnu.org>
 
 	* libinetutils/libinetutils.h (utmp_logout): New function.
