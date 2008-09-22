@@ -16,20 +16,20 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA 02110-1301 USA.
 
-noinst_LIBRARIES = libinetutils.a
+noinst_LTLIBRARIES = libinetutils.la
 
 noinst_HEADERS = argcv.h libinetutils.h
 
 EXTRA_DIST = logwtmp.c
 
-libinetutils_a_SOURCES = argcv.c cleansess.c daemon.c des_rw.c kcmd.c	\
+libinetutils_la_SOURCES = argcv.c cleansess.c daemon.c des_rw.c kcmd.c	\
 	krcmd.c localhost.c logwtmpko.c setsig.c shishi.c tftpsubs.c \
         ttymsg.c utmp_init.c utmp_logout.c
 
-libinetutils_a_LIBADD = daemon.o $(top_builddir)/lib/libgnu.a
+libinetutils_la_LIBADD = daemon.o -L$(top_builddir)/lib -lgnu
 
 @PATHDEFS_MAKE@
 
 AM_CPPFLAGS = $(PATHDEF_WTMPX) $(PATHDEF_TTY_PFX) $(PATHDEF_DEVNULL) $(PATHDEF_HEQUIV) 
 
-INCLUDES = -I$(top_srcdir)/headers -I$(top_srcdir)/lib -I../lib
+INCLUDES = -I$(top_srcdir)/headers -I$(top_srcdir)/lib
