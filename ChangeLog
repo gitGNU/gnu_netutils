@@ -1,5 +1,19 @@
 2008-09-23  Debarshi Ray  <rishi@gnu.org>
 
+	* configure.ac: Check for kernel and assign it the AC_SUBST variable
+	KERNEL.  Add new client `route'.
+	(AC_CONFIG_FILES): Add `libroute/Makefile.am' and
+	`route/Makefile.am'.
+	* Makefile.am (SUBDIRS): Add `libroute' and `route' to list.
+	* libroute/Makefile.am, libroute/bsd_add.c, libroute/bsd_delete.c,
+	libroute/bsd_show.c, libroute/linux_add.c, libroute/linux_delete.c,
+	libroute/linux_show.c, libroute/route.h, libroute/route_backend.c,
+	libroute/route_bsd.c, libroute/route_bsd.h, libroute/route_common.c,
+	libroute/route_linux.c, libroute/route_linux.h, route/Makefile.am,
+	route/Makefile.am: New files.
+
+2008-09-23  Debarshi Ray  <rishi@gnu.org>
+
 	* libinetutils/Makefile.am (noinst_LIBRARIES): Renamed to
 	noinst_LTLIBRARIES.
 	(libinetutils_a_SOURCES): Renamed to libinetutils_la_SOURCES.

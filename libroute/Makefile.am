@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007 Free Software Foundation, Inc. 
+# Copyright (C) 2008 Free Software Foundation, Inc.
 # This file is part of GNU Inetutils.
 #
 # GNU Inetutils is free software; you can redistribute it and/or modify
@@ -14,21 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with GNU Inetutils; see the file COPYING.  If not, write
 # to the Free Software Foundation, Inc., 51 Franklin Street,
-# Fifth Floor, Boston, MA 02110-1301 USA. 
+# Fifth Floor, Boston, MA 02110-1301 USA.
 
-AUTOMAKE_OPTIONS = 1.9
+noinst_LTLIBRARIES = libroute.la
 
-ACLOCAL_AMFLAGS = -I m4
+libroute_la_SOURCES =	route_backend.c route_common.c route_$(KERNEL).c \
+			$(KERNEL)_add.c $(KERNEL)_delete.c $(KERNEL)_show.c
 
-EXTRA_DIST = README-alpha paths ChangeLog.0
+EXTRA_libroute_la_SOURCES = 	bsd_add.c bsd_delete.c bsd_show.c linux_add.c \
+				linux_delete.c linux_show.c route_bsd.c \
+				route_linux.c
 
-SUBDIRS = lib headers libinetutils libroute libtelnet \
-	hostname inetd telnetd libls ftpd rshd rlogind route uucpd rexecd \
-	syslogd tftpd talkd telnet ftp rsh rcp rlogin tftp logger gwhois talk \
-	libicmp ping doc ifconfig traceroute tests
+noinst_HEADERS = route.h route_bsd.h route_linux.h
 
-DISTCLEANFILES = pathdefs.make paths.defs include/*.h include/*/*.h \
-	include/stamp-h
+INCLUDES =	-I$(top_srcdir)/lib -I$(top_srcdir)/libinetutils
 
-snapshot:
-	$(MAKE) dist distdir=$(PACKAGE)-`date +"%Y%m%d"`
+LIBADD =	-L$(top_builddir)/lib -lgnu
+

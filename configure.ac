@@ -28,6 +28,14 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_CONFIG_HEADER([config.h:config.hin])
 AC_CANONICAL_SYSTEM # FIXME: Why not just _HOST?
 
+# FIXME
+case "$host_os" in
+    linux-gnu) KERNEL="linux" ;;
+    freebsd*)  KERNEL="bsd" ;;
+    *)         AC_MSG_ERROR(["$host_os"]) ;;
+esac
+AC_SUBST(KERNEL)
+
 AB_INIT
 
 # config.h turns this on, so make sure it's on for our tests too
@@ -108,6 +116,7 @@ IU_ENABLE_CLIENT(ping)
 IU_ENABLE_CLIENT(ping6)
 IU_ENABLE_CLIENT(rcp)
 IU_ENABLE_CLIENT(rlogin)
+IU_ENABLE_CLIENT(route)
 IU_ENABLE_CLIENT(rsh)
 IU_ENABLE_CLIENT(logger)
 IU_ENABLE_CLIENT(talk)
@@ -789,6 +798,7 @@ Makefile
 libinetutils/Makefile 
 libtelnet/Makefile
 libicmp/Makefile
+libroute/Makefile
 ping/Makefile
 ftp/Makefile
 ftpd/Makefile
@@ -798,6 +808,7 @@ rcp/Makefile
 rexecd/Makefile
 rlogin/Makefile
 rlogind/Makefile
+route/Makefile
 rsh/Makefile
 rshd/Makefile
 logger/Makefile
