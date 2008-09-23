@@ -28,5 +28,6 @@ noinst_HEADERS = ifconfig.h if_index.h flags.h options.h printif.h system.h
 
 @PATHDEFS_MAKE@
 
-INCLUDES = -I$(top_srcdir)/lib -I../lib 
-LDADD = -L../libinetutils -linetutils ../lib/libgnu.a
+INCLUDES = -I$(top_srcdir)/lib
+LDADD = $(top_builddir)/libinetutils/libinetutils.la \
+	-L$(top_builddir)/lib -lgnu

@@ -17,8 +17,17 @@
    to the Free Software Foundation, Inc., 51 Franklin Street,
    Fifth Floor, Boston, MA 02110-1301 USA. */
 
+#include <config.h>
+
 #include "telnetd.h"
-#include <pty.h>
+
+#ifdef HAVE_PTY_H
+# include <pty.h>
+#endif
+
+#ifdef HAVE_LIBUTIL_H
+# include <libutil.h>
+#endif
 
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>

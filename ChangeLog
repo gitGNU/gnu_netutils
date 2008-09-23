@@ -1,3 +1,15 @@
+2008-09-24  Debarshi Ray  <rishi@gnu.org>
+
+	* configure.ac (AC_CHECK_HEADERS): Add `libutil.h' and `pty.h'.
+	* ifconfig/Makefile.am (INCLUDES): Remove `-I../lib '.
+	(LDADD): Replace `-L../libinetutils -linetutils ../lib/libgnu.a'
+	with `$(top_builddir)/libinetutils/libinetutils.la 
+	-L$(top_builddir)/lib -lgnu'.
+	* logger/Makefile.am (INCLUDES, LDADD): Likewise.
+	* telnetd/pty.c: Include <config.h>.
+	[HAVE_PTY_H]: Include <pty.h>.
+	[HAVE_LIBUTIL_H]: Include <libutil.h>.
+
 2008-09-23  Debarshi Ray  <rishi@gnu.org>
 
 	* configure.ac: Check for kernel and assign it the AC_SUBST variable
