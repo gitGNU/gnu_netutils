@@ -3,7 +3,7 @@
 	* configure.ac (AC_CHECK_HEADERS): Add `libutil.h' and `pty.h'.
 	* ifconfig/Makefile.am (INCLUDES): Remove `-I../lib '.
 	(LDADD): Replace `-L../libinetutils -linetutils ../lib/libgnu.a'
-	with `$(top_builddir)/libinetutils/libinetutils.la 
+	with `$(top_builddir)/libinetutils/libinetutils.la
 	-L$(top_builddir)/lib -lgnu'.
 	* logger/Makefile.am (INCLUDES, LDADD): Likewise.
 	* telnetd/pty.c: Include <config.h>.
@@ -41,13 +41,13 @@
 2008-09-13  Debarshi Ray  <rishi@gnu.org>
 
 	* libinetutils/libinetutils.h (utmp_logout): New function.
-	* telnetd/pty.c: Include `pty.h'.
-	[HAVE_SYS_STAT_H]: Include `sys/stat.h'.
+	* telnetd/pty.c: Include <pty.h>.
+	[HAVE_SYS_STAT_H]: Include <sys/stat.h>.
 	(startslave): Renamed to `start_slave'. All declarations and
 	users changed accordingly.
 	* telnetd/slc.c (change_slc): Changed type to `void change_slc (
 	register int func, register char flag, register cc_t val)'.
-	* telnetd/state.c: Include `ctype.h'.
+	* telnetd/state.c: Include <ctype.h>.
 	* telnetd/telnetd.h (getterminaltype, net_buffer_is_full,
 	net_get_char, net_input_level, net_output_byte, net_output_level,
 	net_read, pty_get_char, pty_input_level, pty_input_putback,
@@ -55,15 +55,15 @@
 	(change_slc): Changed type to `void change_slc (register int
 	func, register char flag, register cc_t val)'.
 	* telnetd/term.c (oldeofc): Define only when `VEOF == VMIN'.
-	* telnetd/utility.c: Include `ctype.h', `curses.h' and `term.h'.
-	[HAVE_SYS_STAT_H]: Include `sys/stat.h'.
+	* telnetd/utility.c: Include <ctype.h>, <curses.h> and <term.h>.
+	[HAVE_SYS_STAT_H]: Include <sys/stat.h>.
 	[HAVE_SYS_TYPES_H]: Likewise.
 
-2008-09-12  Debarshi Ray  <rishi@gnu.org>
+2008-09-13  Debarshi Ray  <rishi@gnu.org>
 
-	* ftp/cmds.c [HAVE_LIBREADLINE]: Include `readline/readline.h',
+	* ftp/cmds.c [HAVE_LIBREADLINE]: Include <readline/readline.h>,
 	else use gnulib.
-	[HAVE_LIBHISTORY]: Include `readline/history.h'.
+	[HAVE_LIBHISTORY]: Include <readline/history.h>.
 
 2008-09-12  Debarshi Ray  <rishi@gnu.org>
 
@@ -93,7 +93,7 @@
 
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
 
-	* hostname/hostname.c: Include `progname.h'.
+	* hostname/hostname.c: Include "progname.h".
 	(main): Call set_program_name.
 
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
@@ -129,7 +129,7 @@
 
 2008-08-12  Debarshi Ray  <rishi@gnu.org>
 
-	* hostname/hostname.c: Include arpa/inet.h and netinet/in.h.
+	* hostname/hostname.c: Include <arpa/inet.h> and <netinet/in.h>.
 	Added new switches --alias, --ip-address and removed
 	OPTION_HIDDEN from --file. 
 	(hostname_alias, hostname_ip_address): New variables.
