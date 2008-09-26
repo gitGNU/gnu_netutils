@@ -1,3 +1,8 @@
+2008-09-26  Ashish Shukla  <wahjava@gmail.com>
+
+	* configure.ac (AC_PROG_CC): Removed.
+	(AC_PROG_CC_C99): New check.
+
 2008-09-24  Debarshi Ray  <rishi@gnu.org>
 
 	* configure.ac (AC_CHECK_HEADERS): Add `libutil.h' and `pty.h'.
