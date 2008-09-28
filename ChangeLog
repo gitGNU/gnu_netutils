@@ -1,5 +1,10 @@
 2008-09-29  Debarshi Ray  <rishi@gnu.org>
 
+	* configure.ac (AC_PROG_RANLIB): Removed.  Obsoleted by
+	AC_PROG_LIBTOOL.
+
+2008-09-29  Debarshi Ray  <rishi@gnu.org>
+
 	* libroute/bsd_show.c (bsd_conv_addr_to_name): Remove redundant
 	parentheses.
 
