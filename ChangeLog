@@ -1,5 +1,10 @@
 2008-09-29  Debarshi Ray  <rishi@gnu.org>
 
+	* libroute/bsd_show.c (bsd_conv_addr_to_name): Remove redundant
+	parentheses.
+
+2008-09-29  Debarshi Ray  <rishi@gnu.org>
+
 	* acinclude.m4 (IU_ENABLE_LIBRARY): New function.
 	* configure.ac: New options `--enable-libraries' and
 	`--enable-libroute'.

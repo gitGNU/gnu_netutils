@@ -81,7 +81,7 @@ bsd_conv_addr_to_name (const struct sockaddr *const sock,
   else if (sock->sa_family == AF_INET || sock->sa_family == AF_INET6)
     {
       const struct in_addr addr
-                       = ((struct sockaddr_in *) (sock))->sin_addr;
+                       = ((struct sockaddr_in *) sock)->sin_addr;
 
       conv_inet_addr_to_name (sock->sa_family, (void *) &addr, sizeof (addr),
                               buffer, buffer_size, resolve_names);
