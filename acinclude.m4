@@ -476,6 +476,20 @@ fi;]
 AC_DEFUN([IU_ENABLE_CLIENT], [IU_ENABLE_FOO($1, clients)])
 AC_DEFUN([IU_ENABLE_SERVER], [IU_ENABLE_FOO($1, servers)])
 
+AC_DEFUN([IU_ENABLE_LIBRARY],
+ [AC_ARG_ENABLE($1, AS_HELP_STRING([--disable-$1], [don't compile $1]), ,
+                [enable_]$1=$enable_libraries)
+[if test "$enable_$1" = yes; then
+   $1_BUILD=$1.la
+   $1_INSTALL_HOOK="install-$1-hook"
+else
+   $1_BUILD=''
+   $1_INSTALL_HOOK=''
+fi;]
+  AC_SUBST([$1_BUILD])
+  AC_SUBST([$1_INSTALL_HOOK])
+])
+
 dnl IU_CHECK_KRB5(VERSION,PREFIX)
 dnl Search for a Kerberos implementation in the standard locations plus PREFIX,
 dnl if it is set and not "yes".

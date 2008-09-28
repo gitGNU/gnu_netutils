@@ -38,8 +38,10 @@ struct route_info
   uint8_t dest_len;
   uint8_t src_present;
   char src[NI_MAXHOST];
-  char flags[6];
-  char iface[IFNAMSIZ];
+  char flag_str[6];
+  int flag_bits;
+  char oif_name[IFNAMSIZ];
+  int oif_index;
   uint8_t gateway_present;
   char gateway[NI_MAXHOST];
   uint32_t metric;

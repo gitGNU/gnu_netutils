@@ -19,35 +19,25 @@
 
 #include <errno.h>
 #include <error.h>
-#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/socket.h>
+#include <netlink/addr.h>
+#include <netlink/route/rtnl.h>
+#include <netlink/route/route.h>
 
 #include "route.h"
 #include "route_linux.h"
 
-static uint32_t seqn = 0;
-
 void linux_modify (const int format,
-                   const uint16_t flags,
-	           const void *const dest_addr,
+                   const int flags,
+                   const void *const dest_addr,
                    const size_t dest_addr_size,
-	           const unsigned char dest_len,
-	           const void *const gw_addr,
+                   const unsigned char dest_len,
+                   const void *const gw_addr,
                    const size_t gw_addr_size,
-	           const unsigned int iface);
-ssize_t linux_send_newroute (const int sockfd,
-			     const int format,
-                             const uint16_t flags,
-			     const void *const dest_addr,
-			     const size_t dest_addr_size,
-			     const unsigned char dest_addr_len,
-			     const void *const gw_addr,
-			     const size_t gw_addr_size,
-			     const unsigned int iface);
+                   const unsigned int oif_index);
 
 void
 linux_add (const int format,
@@ -91,6 +81,28 @@ linux_change (const int format,
                 gw_addr, gw_addr_size, iface);
 }
 
+static struct nl_handle *
+linux_create_handle (void)
+{
+  int status;
+  struct nl_cb *cb;
+  struct nl_handle *handle;
+
+  cb = nl_cb_alloc (NL_CB_VERBOSE);
+  handle = nl_handle_alloc_cb (cb);
+  if (handle == NULL)
+    return NULL;
+
+  status = nl_connect (handle, NETLINK_ROUTE);
+  if (status < 0)
+    {
+      nl_handle_destroy (handle);
+      return NULL;
+    }
+
+  return handle;
+}
+
 void
 linux_prepend (const int format,
                const void *const dest_addr,
@@ -121,100 +133,50 @@ linux_replace (const int format,
 
 void
 linux_modify (const int format,
-              const uint16_t flags,
+              const int flags,
 	      const void *const dest_addr,
               const size_t dest_addr_size,
 	      const unsigned char dest_len,
 	      const void *const gw_addr,
               const size_t gw_addr_size,
-	      const unsigned int iface)
+	      const unsigned int oif_index)
 {
-  int sockfd;
-  size_t nsent;
+  int status;
+  struct nl_addr *dest;
+  struct nl_addr *gw;
+  struct nl_handle *handle;
+  struct rtnl_route *route;
 
-  sockfd = socket (PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
-  if (sockfd == -1)
-    error (EXIT_FAILURE, errno, "socket");
+  handle = linux_create_handle ();
+  if (handle == NULL)
+    return;
 
-  nsent = linux_send_newroute (sockfd, format, flags,
-                               dest_addr, dest_addr_size, dest_len,
-                               gw_addr, gw_addr_size, iface);
+  route = rtnl_route_alloc ();
+  if (route == NULL)
+    return;
 
-  close (sockfd);
-}
+  rtnl_route_set_oif (route, oif_index);
 
-ssize_t
-linux_send_newroute (const int sockfd,
-                     const int format,
-                     const uint16_t flags,
-                     const void *const dest_addr,
-                     const size_t dest_addr_size,
-		     const unsigned char dest_addr_len,
-		     const void *const gw_addr,
-                     const size_t gw_addr_size,
-		     const unsigned int iface)
-{
-  int i;
-  unsigned int size = 0;
-  const unsigned short int attr_types[] = { RTA_DST, RTA_GATEWAY, RTA_OIF };
-  ssize_t nsent;
-  rtmroute_t msg;
-  void *data;
-  struct rtattr *attr;
+  dest = nl_addr_build (format, dest_addr, dest_addr_size);
+  if (dest == NULL)
+    return;
+  nl_addr_set_prefixlen (dest, dest_len);
+  rtnl_route_set_dst (route, dest);
+  nl_addr_put (dest);
 
-  memset ((void *) &msg, 0, sizeof (msg));
+  gw = nl_addr_build (format, gw_addr, gw_addr_size);
+  if (gw == NULL)
+    return;
+  rtnl_route_set_gateway (route, gw);
+  nl_addr_put (gw);
 
-  msg.nlmsghdr.nlmsg_len = NLMSG_LENGTH (sizeof (msg.rtmsg));
-  msg.nlmsghdr.nlmsg_type = RTM_NEWROUTE;
-  msg.nlmsghdr.nlmsg_flags = NLM_F_REQUEST | flags;
-  msg.nlmsghdr.nlmsg_seq = seqn;
-  msg.nlmsghdr.nlmsg_pid = 0;
+  rtnl_route_set_scope (route, RT_SCOPE_UNIVERSE);
+  rtnl_route_set_table (route, RT_TABLE_MAIN);
 
-  msg.rtmsg.rtm_family = format;
-  msg.rtmsg.rtm_dst_len = dest_addr_len;
-  msg.rtmsg.rtm_table = RT_TABLE_MAIN;
-  msg.rtmsg.rtm_protocol = RTPROT_BOOT;
-  msg.rtmsg.rtm_scope = RT_SCOPE_UNIVERSE;
-  msg.rtmsg.rtm_type = RTN_UNICAST;
+  status = rtnl_route_add (handle, route, NLM_F_REQUEST | flags);
+  if (status != 0)
+    return;
 
-  attr = (struct rtattr *) RTM_RTA (&msg.rtmsg);
-  size = RTM_PAYLOAD (&msg.nlmsghdr);
-  for (i = 0; i < sizeof (attr_types) / sizeof (attr_types[0]); i++)
-    {
-      attr->rta_type = attr_types[i];
-      switch (attr_types[i])
-	{
-	case RTA_DST:
-	  attr->rta_len = RTA_LENGTH (dest_addr_size);
-	  data = RTA_DATA (attr);
-	  memmove (data, dest_addr, dest_addr_size);
-	  break;
-
-	case RTA_GATEWAY:
-	  attr->rta_len = RTA_LENGTH (gw_addr_size);
-	  data = RTA_DATA (attr);
-	  memmove (data, gw_addr, gw_addr_size);
-	  break;
-
-	case RTA_OIF:
-	  attr->rta_len = RTA_LENGTH (sizeof (iface));
-	  data = RTA_DATA (attr);
-	  memmove (data, (void *) &iface, sizeof (iface));
-	  break;
-
-	default:
-          break;
-	}
-
-      msg.nlmsghdr.nlmsg_len = NLMSG_ALIGN (msg.nlmsghdr.nlmsg_len)
-                               + RTA_ALIGN (attr->rta_len);
-      attr = RTA_NEXT (attr, size);
-    }
-
-  seqn++;
-  nsent = send (sockfd, (void *) &msg, msg.nlmsghdr.nlmsg_len, 0);
-  if (nsent == -1)
-    error (EXIT_FAILURE, errno, "send");
-
-  return nsent;
+  rtnl_route_put (route);
+  nl_handle_destroy (handle);
 }

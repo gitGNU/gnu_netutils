@@ -66,6 +66,10 @@ AC_ARG_ENABLE([servers],
               AC_HELP_STRING([--disable-servers],
                              [Don't compile servers]),
 	      , [enable_servers=yes])
+AC_ARG_ENABLE([libraries],
+              AC_HELP_STRING([--disable-libraries],
+                             [Don't compile libraries]),
+	      , [enable_libraries=yes])
 AC_ARG_ENABLE([clients],
               AC_HELP_STRING([--disable-clients],
                              [Don't compile clients]),
@@ -109,6 +113,8 @@ IU_ENABLE_SERVER(talkd)
 IU_ENABLE_SERVER(telnetd)
 IU_ENABLE_SERVER(tftpd)
 IU_ENABLE_SERVER(uucpd)
+
+IU_ENABLE_LIBRARY(libroute)
 
 IU_ENABLE_CLIENT(ftp)
 IU_ENABLE_CLIENT(hostname)
@@ -184,6 +190,19 @@ if test -z "$LIBHISTORY" && test -n "$LIBREADLINE"; then
 fi
 
 AC_SUBST(LIBHISTORY)
+
+if test x"$KERNEL" == x"linux"; then
+  AC_CHECK_LIB(nl, nl_connect, LIBNL=-lnl,
+               [AC_MSG_WARN(
+                   [nl is not available, so not building libroute and route])
+               enable_libroute="no"
+               enable_route="no"
+               libroute_BUILD=""
+               route_BUILD=""
+               libroute_INSTALL_HOOK=""
+               route_INSTALL_HOOK=""])
+  AC_SUBST(LIBNL)
+fi
 
 dnl See if there's a separate libcrypt (many systems put crypt there)
 AC_CHECK_LIB(crypt, crypt, LIBCRYPT=-lcrypt)

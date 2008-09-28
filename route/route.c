@@ -410,7 +410,7 @@ show_ip_info (const route_info_t * const route_info)
   if (route_info->gateway_present != 0)
     printf ("via %s ", route_info->gateway);
 
-  printf ("dev %s ", route_info->iface);
+  printf ("dev %s ", route_info->oif_name);
 
   if (route_info->src_present != 0)
     printf ("from %s ", route_info->src);
@@ -428,8 +428,8 @@ show_netstat_info (const route_info_t * const route_info)
           route_info->dest,
           route_info->gateway,
           route_info->dest_mask,
-          route_info->flags,
-          route_info->iface);
+          route_info->flag_str,
+          route_info->oif_name);
 }
 
 void
@@ -439,9 +439,9 @@ show_route_info (const route_info_t * const route_info)
           route_info->dest,
           route_info->gateway,
 	  route_info->dest_mask,
-          route_info->flags,
+          route_info->flag_str,
           route_info->metric,
           route_info->ref,
 	  route_info->use,
-          route_info->iface);
+          route_info->oif_name);
 }

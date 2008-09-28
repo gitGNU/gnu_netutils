@@ -1,3 +1,23 @@
+2008-09-29  Debarshi Ray  <rishi@gnu.org>
+
+	* acinclude.m4 (IU_ENABLE_LIBRARY): New function.
+	* configure.ac: New options `--enable-libraries' and
+	`--enable-libroute'.
+	(AC_CHECK_LIB): Add check for libnl on GNU/Linux and AC_SUBST the
+	necessary flags to LIBNL.
+	* libroute/Makefile.am: Make libroute.la optional.
+	(libroute_la_LIBADD): Add `$(LIBNL)'.
+	* libroute/linux_add.c, libroute/linux_delete.c,
+	libroute/linux_show.c: Re-write using libnl instead of dealing with
+	PF_NETLINK directly.
+	(seqn): Variable removed.
+	(linux_create_handle): New function.
+	* libroute/route.h (struct route_info): Rename members `flags' and
+	`iface' to `flag_str' and `oif_name' respectively.  New
+	members `flag_bits' and `oif_index'.  All users updated accordingly.
+	* libroute/route_common.c (route_info_init): Check if route_info is
+	NULL, and use memset.
+
 2008-09-26  Ashish Shukla  <wahjava@gmail.com>
 
 	* configure.ac (AC_PROG_CC): Removed.

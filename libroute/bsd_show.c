@@ -150,9 +150,9 @@ bsd_parse_msg (const struct rt_msghdr *msg, size_t nread,
         list = route_info;
       route_info_init (route_info, resolve_names);
 
-      if_indextoname (msg->rtm_index, route_info->iface);
-      bsd_flags (msg->rtm_flags, route_info->flags,
-                 sizeof (route_info->flags));
+      if_indextoname (msg->rtm_index, route_info->oif_name);
+      bsd_flags (msg->rtm_flags, route_info->flag_str,
+                 sizeof (route_info->flag_str));
 
       if ((msg->rtm_addrs & RTA_DST) != 0)
         {

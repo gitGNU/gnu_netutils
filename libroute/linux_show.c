@@ -17,190 +17,169 @@
    to the Free Software Foundation, Inc., 51 Franklin Street,
    Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#include <errno.h>
-#include <error.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include <net/if.h>
-#include <sys/socket.h>
+#include <netlink/addr.h>
+#include <netlink/object.h>
+#include <netlink/route/rtnl.h>
+#include <netlink/route/route.h>
 
 #include "route.h"
 #include "route_linux.h"
 
-static uint32_t seqn = 0;
+struct user_data
+{
+  route_info_t *head;
+  route_info_t *tail;
+  const short int resolve_names;
+};
+typedef struct user_data user_data_t;
 
-const route_info_t * linux_parse_msg (const rtmroute_t * msg, size_t size,
-		                      const short int resolve_names);
-size_t linux_recv_newroute (int sockfd, rtmroute_t * msg);
-ssize_t linux_send_getroute (int sockfd);
+char *
+linux_conv_addr_to_name (struct nl_addr *const addr,
+                         char *const buffer, const size_t buffer_size,
+                         const short int resolve_names)
+{
+  int status;
+  struct sockaddr sa;
+  socklen_t salen = sizeof (sa);
+
+  if (addr == NULL)
+    return NULL;
+
+  status = nl_addr_fill_sockaddr (addr, &sa, &salen);
+  if (status != 0)
+    return NULL;
+
+  if (sa.sa_family != AF_INET && sa.sa_family != AF_INET6)
+    return NULL;
+
+  if (sa.sa_family == AF_INET)
+    {
+      const struct in_addr addr = ((struct sockaddr_in *) &sa)->sin_addr;
+      conv_inet_addr_to_name (sa.sa_family, (void *) &addr, sizeof (addr),
+                              buffer, buffer_size, resolve_names);
+    }
+  else if (sa.sa_family == AF_INET6)
+    {
+      const struct in6_addr addr = ((struct sockaddr_in6 *) &sa)->sin6_addr;
+      conv_inet_addr_to_name (sa.sa_family, (void *) &addr, sizeof (addr),
+                              buffer, buffer_size, resolve_names);
+    }
+
+  return buffer;
+}
+
+static struct nl_handle *
+linux_create_handle (void)
+{
+  int status;
+  struct nl_cb *cb;
+  struct nl_handle *handle;
+
+  cb = nl_cb_alloc (NL_CB_VERBOSE);
+  handle = nl_handle_alloc_cb (cb);
+  if (handle == NULL)
+    return NULL;
+
+  status = nl_connect (handle, NETLINK_ROUTE);
+  if (status < 0)
+    {
+      nl_handle_destroy (handle);
+      return NULL;
+    }
+
+  return handle;
+}
+
+void
+linux_parse_route (struct nl_object *object, void *data)
+{
+  const char *status;
+  int format;
+  const short int resolve_names = ((user_data_t *) data)->resolve_names;
+  route_info_t **head = &((user_data_t *) data)->head;
+  route_info_t **tail = &((user_data_t *) data)->tail;
+  struct nl_addr *addr;
+  struct rtnl_route *const route = (struct rtnl_route *) object;
+
+  format = rtnl_route_get_family (route);
+  if (format != AF_INET || rtnl_route_get_table (route) != RT_TABLE_MAIN)
+    return;
+
+  *tail = route_info_append (*tail);
+  if (*head == NULL)
+    *head = *tail;
+
+  route_info_init (*tail, resolve_names);
+
+  addr = rtnl_route_get_dst (route);
+  if (addr != NULL)
+    {
+      status = linux_conv_addr_to_name (addr, (*tail)->dest,
+                                        sizeof ((*tail)->dest), resolve_names);
+      if (status != NULL)
+        (*tail)->dest_present = 1;
+    }
+
+  (*tail)->dest_len = rtnl_route_get_dst_len (route);
+  convert_netmask (format, (*tail)->dest_len, (*tail)->dest_mask,
+                   sizeof ((*tail)->dest_mask));
+
+  addr = rtnl_route_get_src (route);
+  if (addr != NULL)
+    {
+      status = linux_conv_addr_to_name (addr, (*tail)->src,
+                                        sizeof ((*tail)->src), resolve_names);
+      if (status != NULL)
+        (*tail)->src_present = 1;
+    }
+
+  (*tail)->flag_bits = rtnl_route_get_flags (route);
+  rtnl_route_nh_flags2str ((*tail)->flag_bits, (*tail)->flag_str,
+                           sizeof ((*tail)->flag_str));
+
+  (*tail)->oif_index = rtnl_route_get_oif (route);
+  if_indextoname ((*tail)->oif_index, (*tail)->oif_name);
+
+  addr = rtnl_route_get_gateway (route);
+  if (addr != NULL)
+    {
+      status = linux_conv_addr_to_name (addr, (*tail)->gateway,
+                                        sizeof ((*tail)->gateway),
+                                        resolve_names);
+      if (status != NULL)
+        (*tail)->gateway_present = 1;
+    }
+
+  (*tail)->metric = rtnl_route_get_prio (route);
+
+  addr = rtnl_route_get_pref_src (route);
+  if (addr != NULL)
+    {
+      status = linux_conv_addr_to_name (addr, (*tail)->pref_src,
+                                        sizeof ((*tail)->pref_src),
+                                        resolve_names);
+      if (status != NULL)
+        (*tail)->pref_src_present = 1;
+    }
+}
 
 const route_info_t *
 linux_show (const short int resolve_names)
 {
-  int sockfd;
-  const route_info_t *list;
-  size_t nread;
-  rtmroute_t msg;
+  struct nl_cache *cache;
+  struct nl_handle *handle;
+  user_data_t data = {NULL, NULL, resolve_names};
 
-  sockfd = socket (PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
-  if (sockfd == -1)
-    error (EXIT_FAILURE, errno, "socket");
+  handle = linux_create_handle ();
+  if (handle == NULL)
+    return NULL;
 
-  linux_send_getroute (sockfd);
-  nread = linux_recv_newroute (sockfd, &msg);
-  list = linux_parse_msg (&msg, nread, resolve_names);
-  close (sockfd);
-  return list;
-}
+  cache = rtnl_route_alloc_cache (handle);
+  nl_cache_mngt_provide (cache);
+  nl_cache_foreach (cache, linux_parse_route, (void *) &data);
+  nl_cache_free (cache);
 
-const route_info_t *
-linux_parse_msg (const rtmroute_t * msg, size_t nread,
-		 const short int resolve_names)
-{
-  unsigned int size;
-  const route_info_t *list = NULL;
-  route_info_t *route_info = NULL;
-  struct rta_cacheinfo *cacheinfo;
-  struct rtattr *attr;
-
-  while (NLMSG_OK (&msg->nlmsghdr, nread) != 0)
-    {
-      /* FIXME: IPv4 specific. */
-      if ((msg->rtmsg.rtm_family != AF_INET)
-	  || (msg->rtmsg.rtm_table != RT_TABLE_MAIN))
-	goto next;
-
-      route_info = route_info_append (route_info);
-      if (list == NULL)
-        list = route_info;
-      route_info_init (route_info, resolve_names);
-
-      route_info->dest_len = msg->rtmsg.rtm_dst_len;
-      convert_netmask (msg->rtmsg.rtm_family, msg->rtmsg.rtm_dst_len,
-		       route_info->dest_mask, sizeof (route_info->dest_mask));
-
-      attr = (struct rtattr *) RTM_RTA (&msg->rtmsg);
-      size = RTM_PAYLOAD (&msg->nlmsghdr);
-      while (RTA_OK (attr, size) != 0)
-	{
-	  switch (attr->rta_type)
-	    {
-	    case RTA_CACHEINFO:
-	      cacheinfo = (struct rta_cacheinfo *) RTA_DATA (attr);
-	      route_info->ref = cacheinfo->rta_clntref;
-	      route_info->use = cacheinfo->rta_used;
-	      break;
-
-            case RTA_DST:
-              route_info->dest_present = 1;
-              conv_inet_addr_to_name (msg->rtmsg.rtm_family,
-                                      RTA_DATA (attr), RTA_PAYLOAD (attr),
-                                      route_info->dest,
-                                      sizeof (route_info->dest),
-                                      resolve_names);
-	      break;
-
-	    case RTA_SRC:
-	      route_info->src_present = 1;
-	      conv_inet_addr_to_name (msg->rtmsg.rtm_family,
-                                      RTA_DATA (attr), RTA_PAYLOAD (attr),
-                                      route_info->src,
-                                      sizeof (route_info->src),
-                                      resolve_names);
-              break;
-
-	    case RTA_OIF:
-              if_indextoname (*(int *) RTA_DATA (attr), route_info->iface);
-	      break;
-
-	    case RTA_GATEWAY:
-	      route_info->gateway_present = 1;
-	      conv_inet_addr_to_name (msg->rtmsg.rtm_family,
-                                      RTA_DATA (attr), RTA_PAYLOAD (attr),
-                                      route_info->gateway,
-                                      sizeof (route_info->gateway),
-                                      resolve_names);
-	      break;
-
-	    case RTA_PRIORITY:
-	      route_info->metric = *(int *) RTA_DATA (attr);
-	      break;
-
-	    case RTA_PREFSRC:
-	      route_info->pref_src_present = 1;
-	      conv_inet_addr_to_name (msg->rtmsg.rtm_family,
-                                      RTA_DATA (attr), RTA_PAYLOAD (attr),
-                                      route_info->pref_src,
-                                      sizeof (route_info->pref_src),
-                                      resolve_names);
-	      break;
-
-	    default:
-	      break;
-	    }
-
-	  attr = RTA_NEXT (attr, size);
-	}
-
-    next:
-      msg = (rtmroute_t *) NLMSG_NEXT (&msg->nlmsghdr, nread);
-    }
-
-  return list;
-}
-
-size_t
-linux_recv_newroute (int sockfd, rtmroute_t * msg)
-{
-  size_t nread = 0;
-  size_t size = 0;
-
-  if (msg == NULL)
-    return -1;
-
-  nread = recv (sockfd, (void *) msg, sizeof (*msg), 0);
-
-  size = nread;
-  while (NLMSG_OK (&msg->nlmsghdr, size) != 0)
-    {
-      if (msg->nlmsghdr.nlmsg_type == NLMSG_ERROR)
-	error (EXIT_FAILURE, 0,
-	       "netlink message truncated and can not be parsed");
-      else if (msg->nlmsghdr.nlmsg_pid != getpid ())
-	error (0, 0, "netlink message has invalid PID");
-
-      if (msg->nlmsghdr.nlmsg_type == NLMSG_DONE)
-	break;
-
-      if ((msg->nlmsghdr.nlmsg_flags & NLM_F_MULTI) == 0)
-	break;
-
-      msg = (rtmroute_t *) NLMSG_NEXT (&msg->nlmsghdr, size);
-    }
-
-  return nread;
-}
-
-ssize_t
-linux_send_getroute (int sockfd)
-{
-  rtmroute_t msg;
-  ssize_t nsent;
-
-  memset ((void *) &msg, 0, sizeof (msg));
-  msg.nlmsghdr.nlmsg_len = NLMSG_LENGTH (sizeof (msg.rtmsg));
-  msg.nlmsghdr.nlmsg_type = RTM_GETROUTE;
-  msg.nlmsghdr.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
-  msg.nlmsghdr.nlmsg_seq = seqn;
-  msg.nlmsghdr.nlmsg_pid = 0;
-
-  seqn++;
-  nsent = send (sockfd, (void *) &msg, msg.nlmsghdr.nlmsg_len, 0);
-  if (nsent == -1)
-    error (EXIT_FAILURE, errno, "send");
-
-  return nsent;
+  nl_handle_destroy (handle);
+  return data.head;
 }

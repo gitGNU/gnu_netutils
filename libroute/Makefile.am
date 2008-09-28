@@ -16,7 +16,9 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street,
 # Fifth Floor, Boston, MA 02110-1301 USA.
 
-noinst_LTLIBRARIES = libroute.la
+noinst_LTLIBRARIES = @libroute_BUILD@
+
+EXTRA_LTLIBRARIES = libroute.la
 
 libroute_la_SOURCES =	route_backend.c route_common.c route_$(KERNEL).c \
 			$(KERNEL)_add.c $(KERNEL)_delete.c $(KERNEL)_show.c
@@ -29,5 +31,5 @@ noinst_HEADERS = route.h route_bsd.h route_linux.h
 
 INCLUDES =	-I$(top_srcdir)/lib -I$(top_srcdir)/libinetutils
 
-LIBADD =	-L$(top_builddir)/lib -lgnu
+libroute_la_LIBADD =	-L$(top_builddir)/lib -lgnu $(LIBNL)
 

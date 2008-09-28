@@ -165,6 +165,11 @@ void
 route_info_init (route_info_t * const route_info,
 		 const short int resolve_names)
 {
+  if (route_info == NULL)
+    return;
+
+  memset (route_info, 0, sizeof (*route_info));
+
   if (resolve_names == 0)
     {
       strcpy (route_info->dest, "0.0.0.0");
@@ -179,21 +184,6 @@ route_info_init (route_info_t * const route_info,
       strcpy (route_info->gateway, "*");
       strcpy (route_info->pref_src, "*");
     }
-
-  route_info->dest_present = 0;
-  route_info->dest_len = 0;
-  route_info->src_present = 0;
-  /* Default not needed. Will be calculated from struct rtmsg. */
-  strcpy (route_info->dest_mask, "");
-  /* No sane default. */
-  strcpy (route_info->flags, "");
-  strcpy (route_info->iface, "");
-  route_info->gateway_present = 0;
-  route_info->metric = 0;
-  route_info->pref_src_present = 0;
-  route_info->ref = 0;
-  route_info->use = 0;
-  route_info->next = NULL;
 }
 
 route_info_t *

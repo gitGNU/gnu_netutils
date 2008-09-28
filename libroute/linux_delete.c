@@ -19,22 +19,38 @@
 
 #include <errno.h>
 #include <error.h>
-#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/socket.h>
+#include <netlink/addr.h>
+#include <netlink/route/rtnl.h>
+#include <netlink/route/route.h>
 
 #include "route.h"
 #include "route_linux.h"
 
-static uint32_t seqn = 0;
+static struct nl_handle *
+linux_create_handle (void)
+{
+  int status;
+  struct nl_cb *cb;
+  struct nl_handle *handle;
 
-ssize_t linux_send_delroute (const int sockfd, const int format,
-			     const void *const dest_addr,
-			     const size_t dest_addr_size,
-			     const unsigned char dest_len);
+  cb = nl_cb_alloc (NL_CB_VERBOSE);
+  handle = nl_handle_alloc_cb (cb);
+  if (handle == NULL)
+    return NULL;
+
+  status = nl_connect (handle, NETLINK_ROUTE);
+  if (status < 0)
+    {
+      nl_handle_destroy (handle);
+      return NULL;
+    }
+
+  return handle;
+}
 
 void
 linux_delete (const int format,
@@ -42,72 +58,33 @@ linux_delete (const int format,
               const size_t dest_addr_size,
               const unsigned char dest_len)
 {
-  int sockfd;
-  size_t nsent;
+  int status;
+  struct nl_addr *dest;
+  struct nl_handle *handle;
+  struct rtnl_route *route;
 
-  sockfd = socket (PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
-  if (sockfd == -1)
-    error (EXIT_FAILURE, errno, "socket");
+  handle = linux_create_handle ();
+  if (handle == NULL)
+    return;
 
-  nsent = linux_send_delroute (sockfd, format,
-                               dest_addr, dest_addr_size, dest_len);
+  route = rtnl_route_alloc ();
+  if (route == NULL)
+    return;
 
-  close (sockfd);
-}
+  dest = nl_addr_build (format, dest_addr, dest_addr_size);
+  if (dest == NULL)
+    return;
+  nl_addr_set_prefixlen (dest, dest_len);
+  rtnl_route_set_dst (route, dest);
+  nl_addr_put (dest);
 
-ssize_t
-linux_send_delroute (const int sockfd, const int format,
-		     const void *const dest_addr,
-                     const size_t dest_addr_size,
-		     const unsigned char dest_addr_len)
-{
-  int i;
-  unsigned int size = 0;
-  unsigned short int attr_types[] = { RTA_DST };
-  ssize_t nsent;
-  rtmroute_t msg;
-  void *data;
-  struct rtattr *attr;
+  rtnl_route_set_scope (route, RT_SCOPE_UNIVERSE);
+  rtnl_route_set_table (route, RT_TABLE_MAIN);
 
-  memset ((void *) &msg, 0, sizeof (msg));
+  status = rtnl_route_del (handle, route, NLM_F_REQUEST);
+  if (status != 0)
+    return;
 
-  msg.nlmsghdr.nlmsg_len = NLMSG_LENGTH (sizeof (msg.rtmsg));
-  msg.nlmsghdr.nlmsg_type = RTM_DELROUTE;
-  msg.nlmsghdr.nlmsg_flags = NLM_F_REQUEST;
-  msg.nlmsghdr.nlmsg_seq = seqn;
-  msg.nlmsghdr.nlmsg_pid = 0;
-
-  msg.rtmsg.rtm_family = format;
-  msg.rtmsg.rtm_dst_len = dest_addr_len;
-  msg.rtmsg.rtm_table = RT_TABLE_MAIN;
-  msg.rtmsg.rtm_scope = RT_SCOPE_NOWHERE;
-
-  attr = (struct rtattr *) RTM_RTA (&msg.rtmsg);
-  size = RTM_PAYLOAD (&msg.nlmsghdr);
-  for (i = 0; i < sizeof (attr_types) / sizeof (attr_types[0]); i++)
-    {
-      attr->rta_type = attr_types[i];
-      switch (attr_types[i])
-	{
-	case RTA_DST:
-	  attr->rta_len = RTA_LENGTH (dest_addr_size);
-	  data = RTA_DATA (attr);
-	  memmove (data, dest_addr, dest_addr_size);
-	  break;
-
-	default:
-	  break;
-	}
-
-      msg.nlmsghdr.nlmsg_len = NLMSG_ALIGN (msg.nlmsghdr.nlmsg_len)
-	+ RTA_ALIGN (attr->rta_len);
-      attr = RTA_NEXT (attr, size);
-    }
-
-  seqn++;
-  nsent = send (sockfd, (void *) &msg, msg.nlmsghdr.nlmsg_len, 0);
-  if (nsent == -1)
-    error (EXIT_FAILURE, errno, "send");
-
-  return nsent;
+  rtnl_route_put (route);
+  nl_handle_destroy (handle);
 }
