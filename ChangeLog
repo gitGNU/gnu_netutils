@@ -1,5 +1,11 @@
 2008-09-29  Debarshi Ray  <rishi@gnu.org>
 
+	* libroute/route_backend.c, libroute/route_bsd.c,
+	libroute/route_bsd.h, libroute/route_common.c,
+	libroute/route_linux.c: Add a copyright statement.
+
+2008-09-29  Debarshi Ray  <rishi@gnu.org>
+
 	* configure.ac (AC_PROG_RANLIB): Removed.  Obsoleted by
 	AC_PROG_LIBTOOL.
 
