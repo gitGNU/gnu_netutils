@@ -36,7 +36,7 @@
 #include "route.h"
 #include "xalloc.h"
 
-enum _route_command_t
+enum route_command
 {
   ROUTE_COMMAND_ADD,
   ROUTE_COMMAND_APPEND,
@@ -47,9 +47,9 @@ enum _route_command_t
   ROUTE_COMMAND_SHOW,
   ROUTE_COMMAND_INVALID
 };
-typedef enum _route_command_t route_command_t;
+typedef enum route_command route_command_t;
 
-struct _route_options_t
+struct route_options
 {
   route_command_t route_command;
   void *route_dest_addr;
@@ -61,7 +61,7 @@ struct _route_options_t
   short int route_resolve_names;
   unsigned int route_iface;
 };
-typedef struct _route_options_t route_options_t;
+typedef struct route_options route_options_t;
 
 static const route_info_t *list = NULL;
 static route_options_t options;

@@ -53,7 +53,7 @@ struct route_info
 typedef struct route_info route_info_t;
 
 /* Backend interface. */
-struct _route_backend_t
+struct route_backend
 {
   void (*add) (const int format,
                const void *const dest_addr,
@@ -103,7 +103,7 @@ struct _route_backend_t
   const route_info_t * (*show) (const sa_family_t sa_family,
                                 const short int resolve_names);
 };
-typedef struct _route_backend_t route_backend_t;
+typedef struct route_backend route_backend_t;
 
 /* route_backend.c */
 extern const route_backend_t *route_backend;
