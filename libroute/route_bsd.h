@@ -38,7 +38,8 @@ extern void bsd_delete (const int format,
                         const size_t dest_addr_size,
                         const unsigned char dest_len);
 
-extern const route_info_t * bsd_show (const short int resolve_names);
+extern const route_info_t * bsd_show (const sa_family_t sa_family,
+                                      const short int resolve_names);
 
 extern const route_backend_t bsd_backend;
 

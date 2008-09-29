@@ -83,7 +83,8 @@ extern void linux_replace (const int format,
                            const size_t gw_addr_size,
                            const unsigned int iface);
 
-extern const route_info_t * linux_show (const short int resolve_names);
+extern const route_info_t * linux_show (const sa_family_t sa_family,
+                                        const short int resolve_names);
 
 extern const route_backend_t linux_backend;
 

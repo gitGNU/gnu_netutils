@@ -1,3 +1,21 @@
+2008-09-30  Ashish Shukla  <wahjava@gmail.com>
+	    Debarshi Ray  <rishi@gnu.org>
+
+	* libroute/bsd_show.c (ROUNDUP): Macro removed.  Use SA_SIZE
+	instead.
+	(bsd_parse_msg): Added new argument `const sa_family_t sa_family'.
+	All declarations and users updated accordingly.
+	(bsd_conv_addr_to_name): Support IPv6 addresses.
+	(bsd_parse_msg): Likewise.
+	* libroute/linux_show.c (struct user_data): New member `sa_family'.
+	All users updated accordingly.
+	* libroute/route.h (struct route_info): Size of `dest_mask' is
+	NI_MAXHOST.
+	(struct _route_backend_t): Added new argument `const sa_family_t
+	sa_family' to member `show'.  All backends updated accordingly.
+	* route/route.c: Added new switch `--family'.
+	(struct _route_options_t): New member `sa_family'.
+
 2008-09-29  Debarshi Ray  <rishi@gnu.org>
 
 	* libroute/route_backend.c, libroute/route_bsd.c,

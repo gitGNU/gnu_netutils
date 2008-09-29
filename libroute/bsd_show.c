@@ -44,9 +44,6 @@
 #include "route.h"
 #include "xalloc.h"
 
-#define ROUNDUP(a) \
-	((a) > 0 ? (1 + (((a) - 1) | (sizeof(long) - 1))) : sizeof(long))
-
 enum
 {
   K_INET = 20,
@@ -64,7 +61,8 @@ void bsd_conv_addr_to_name (const struct sockaddr *const sock,
                             char *const buffer, const size_t buffer_size,
                             const short int resolve_names);
 void bsd_flags (const int field, char *const buffer, size_t size);
-const route_info_t * bsd_parse_msg (const struct rt_msghdr *msg, size_t nread,
+const route_info_t * bsd_parse_msg (const sa_family_t sa_family,
+                                    const struct rt_msghdr *msg, size_t nread,
                                     const short int resolve_names);
 size_t bsd_sysctl (void ** buffer, size_t *const size);
 struct rt_msghdr * rt_msg_next (const struct rt_msghdr *rtm,
@@ -80,10 +78,21 @@ bsd_conv_addr_to_name (const struct sockaddr *const sock,
                             resolve_names);
   else if (sock->sa_family == AF_INET || sock->sa_family == AF_INET6)
     {
-      const struct in_addr addr
-                       = ((struct sockaddr_in *) sock)->sin_addr;
+      void *addr;
+      size_t addr_size;
 
-      conv_inet_addr_to_name (sock->sa_family, (void *) &addr, sizeof (addr),
+      if (sock->sa_family == AF_INET)
+	{
+	  addr = &(((struct sockaddr_in *) sock)->sin_addr);
+	  addr_size = sizeof (struct in_addr);
+	}
+      else  /* AF_INET */
+	{
+	  addr = &(((struct sockaddr_in6 *) sock)->sin6_addr);
+	  addr_size = sizeof (struct in6_addr);
+	}
+
+      conv_inet_addr_to_name (sock->sa_family, addr, addr_size,
                               buffer, buffer_size, resolve_names);
     }
   else
@@ -117,7 +126,7 @@ bsd_flags (const int field, char *const buffer, size_t size)
 }
 
 const route_info_t *
-bsd_show (const short int resolve_names)
+bsd_show (const sa_family_t sa_family, const short int resolve_names)
 {
   const route_info_t *list;
   size_t nread;
@@ -125,13 +134,14 @@ bsd_show (const short int resolve_names)
   struct rt_msghdr *msg;
 
   nread = bsd_sysctl ((void **) &msg, &size);
-  list = bsd_parse_msg (msg, nread, resolve_names);
+  list = bsd_parse_msg (sa_family, msg, nread, resolve_names);
   free (msg);
   return list;
 }
 
 const route_info_t *
-bsd_parse_msg (const struct rt_msghdr *msg, size_t nread,
+bsd_parse_msg (const sa_family_t sa_family,
+               const struct rt_msghdr *msg, size_t nread,
                const short int resolve_names)
 {
   const route_info_t *list = NULL;
@@ -141,8 +151,7 @@ bsd_parse_msg (const struct rt_msghdr *msg, size_t nread,
   while (msg != NULL)
     {
       sock_addr = (struct sockaddr *) (msg + 1);
-      /* FIXME: IPv4 specific. */
-      if (sock_addr->sa_family != AF_INET)
+      if (sock_addr->sa_family != sa_family)
         goto next;
 
       route_info = route_info_append (route_info);
@@ -156,23 +165,67 @@ bsd_parse_msg (const struct rt_msghdr *msg, size_t nread,
 
       if ((msg->rtm_addrs & RTA_DST) != 0)
         {
+#ifdef __KAME__
+          /* Remove embedded scope id-field added by KAME implementation. */
+          if(sa_family == AF_INET6)
+            {
+              struct in6_addr *addr_6
+                = &(((struct sockaddr_in6 *) sock_addr)->sin6_addr);
+
+              if((IN6_IS_ADDR_LINKLOCAL (addr_6)
+                    || IN6_IS_ADDR_MC_LINKLOCAL (addr_6))
+                   && ((struct sockaddr_in6 *) sock_addr)->sin6_scope_id == 0)
+		{
+                  addr_6->s6_addr[2] = 0;
+                  addr_6->s6_addr[3] = 0;
+                }
+            }
+#endif  /* __KAME__ */
           route_info->dest_present = 1;
           bsd_conv_addr_to_name (sock_addr, route_info->dest,
                                  sizeof (route_info->dest), resolve_names);
         }
 
       sock_addr = (struct sockaddr *) ((char *) sock_addr
-                                       + ROUNDUP (sock_addr->sa_len));
+                                         + SA_SIZE(sock_addr));
 
       if ((msg->rtm_addrs & RTA_GATEWAY) != 0)
         {
+#ifdef __KAME__
+          /* Remove embedded scope id-field added by KAME implementation. */
+          if(sa_family == AF_INET6)
+            {
+              struct in6_addr *addr_6
+                = &(((struct sockaddr_in6 *) sock_addr)->sin6_addr);
+
+              if((IN6_IS_ADDR_LINKLOCAL (addr_6)
+                    || IN6_IS_ADDR_MC_LINKLOCAL(addr_6))
+                   && ((struct sockaddr_in6 *)sock_addr)->sin6_scope_id == 0)
+                {
+                  addr_6->s6_addr[2] = 0;
+                  addr_6->s6_addr[3] = 0;
+                }
+            }
+#endif  /* __KAME__ */
           route_info->gateway_present = 1;
           bsd_conv_addr_to_name (sock_addr, route_info->gateway,
                                  sizeof (route_info->gateway), resolve_names);
-        }
+	}
 
       sock_addr = (struct sockaddr *) ((char *) sock_addr
-                                       + ROUNDUP (sock_addr->sa_len));
+                                       + SA_SIZE(sock_addr));
+      if ((msg->rtm_addrs & RTA_NETMASK) != 0)
+        {
+          char buffer[sizeof(struct sockaddr_in6)];
+
+	  memset (buffer, 0, sizeof(struct sockaddr_in6));
+          strncpy (buffer, (char *) sock_addr, sock_addr->sa_len);
+          ((struct sockaddr *) buffer)->sa_family = sa_family;
+
+	  bsd_conv_addr_to_name ((struct sockaddr *) buffer,
+                                 route_info->dest_mask,
+                                 sizeof(route_info->dest_mask), 0);
+        }
 
     next:
       msg = rt_msg_next (msg, &nread);

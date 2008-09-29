@@ -29,12 +29,11 @@
 #include <sys/socket.h>
 #include <net/if.h>
 
-/* FIXME: IPv4 specific. */
 struct route_info
 {
   uint8_t dest_present;
   char dest[NI_MAXHOST];
-  char dest_mask[16];
+  char dest_mask[NI_MAXHOST];
   uint8_t dest_len;
   uint8_t src_present;
   char src[NI_MAXHOST];
@@ -101,7 +100,8 @@ struct _route_backend_t
                    const size_t gw_addr_size,
                    const unsigned int iface);
 
-  const route_info_t * (*show) (const short int resolve_names);
+  const route_info_t * (*show) (const sa_family_t sa_family,
+                                const short int resolve_names);
 };
 typedef struct _route_backend_t route_backend_t;
 

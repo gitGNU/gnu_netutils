@@ -30,6 +30,7 @@ struct user_data
 {
   route_info_t *head;
   route_info_t *tail;
+  const sa_family_t sa_family;
   const short int resolve_names;
 };
 typedef struct user_data user_data_t;
@@ -95,15 +96,15 @@ void
 linux_parse_route (struct nl_object *object, void *data)
 {
   const char *status;
-  int format;
+  const sa_family_t sa_family = ((user_data_t *) data)->sa_family;
   const short int resolve_names = ((user_data_t *) data)->resolve_names;
   route_info_t **head = &((user_data_t *) data)->head;
   route_info_t **tail = &((user_data_t *) data)->tail;
   struct nl_addr *addr;
   struct rtnl_route *const route = (struct rtnl_route *) object;
 
-  format = rtnl_route_get_family (route);
-  if (format != AF_INET || rtnl_route_get_table (route) != RT_TABLE_MAIN)
+  if (rtnl_route_get_family (route) != sa_family
+        || rtnl_route_get_table (route) != RT_TABLE_MAIN)
     return;
 
   *tail = route_info_append (*tail);
@@ -122,7 +123,7 @@ linux_parse_route (struct nl_object *object, void *data)
     }
 
   (*tail)->dest_len = rtnl_route_get_dst_len (route);
-  convert_netmask (format, (*tail)->dest_len, (*tail)->dest_mask,
+  convert_netmask (sa_family, (*tail)->dest_len, (*tail)->dest_mask,
                    sizeof ((*tail)->dest_mask));
 
   addr = rtnl_route_get_src (route);
@@ -165,11 +166,11 @@ linux_parse_route (struct nl_object *object, void *data)
 }
 
 const route_info_t *
-linux_show (const short int resolve_names)
+linux_show (const sa_family_t sa_family, const short int resolve_names)
 {
   struct nl_cache *cache;
   struct nl_handle *handle;
-  user_data_t data = {NULL, NULL, resolve_names};
+  user_data_t data = {NULL, NULL, sa_family, resolve_names};
 
   handle = linux_create_handle ();
   if (handle == NULL)

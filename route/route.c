@@ -57,6 +57,7 @@ struct _route_options_t
   unsigned char route_dest_len;
   void *route_gw_addr;
   size_t route_gw_addr_size;
+  sa_family_t route_sa_family;
   short int route_resolve_names;
   unsigned int route_iface;
 };
@@ -118,6 +119,8 @@ static struct argp_option argp_options[] = {
   {"dev", ARG_DEV, "INTERFACE", 0,
    "Force the route to be associated with the " "specified INTERFACE",
    GRP + 1},
+  {"family", 'A', "AF", 0, "Use address Family AF (inet (default) or inet6)",
+   GRP + 1},
   {"fib", 'F', NULL, 0, "Display Forwarding Information Base (default)",
    GRP + 1},
   {"gateway", 'g', "GW", 0, "Use GW as the gateway for a route", GRP + 1},
@@ -151,6 +154,13 @@ parse_opt (int key, char *arg, struct argp_state *state)
         error (EXIT_FAILURE, 0, "invalid device (%s)", arg);
       break;
 
+    case 'A':
+      if (strncmp("inet6", arg, strlen ("inet6")) == 0)
+        options->route_sa_family = AF_INET6;
+      else if (strncmp("inet", arg, strlen ("inet")) == 0)
+        options->route_sa_family = AF_INET;
+      break;
+
     /* FIXME: incomplete. */
     case 'F':
       break;
@@ -158,7 +168,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case 'g':
       options->route_gw_addr_size = sizeof (struct in_addr);
       options->route_gw_addr = xmalloc (options->route_gw_addr_size);
-      conv_name_to_addr (AF_INET, arg, options->route_gw_addr,
+      conv_name_to_addr (options->route_sa_family, arg,
+                         options->route_gw_addr,
                          options->route_gw_addr_size,
                          options->route_resolve_names);
       break;
@@ -166,7 +177,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case ARG_HOST:
       options->route_dest_addr_size = sizeof (struct in_addr);
       options->route_dest_addr = xmalloc (options->route_dest_addr_size);
-      conv_name_to_addr (AF_INET, arg, options->route_dest_addr,
+      conv_name_to_addr (options->route_sa_family, arg,
+                         options->route_dest_addr,
                          options->route_dest_addr_size,
                          options->route_resolve_names);
       options->route_dest_len = sizeof (struct in_addr) * 8;
@@ -180,7 +192,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case ARG_NET:
       options->route_dest_addr_size = sizeof (struct in_addr);
       options->route_dest_addr = xmalloc (options->route_dest_addr_size);
-      conv_name_to_addr (AF_INET, arg, options->route_dest_addr,
+      conv_name_to_addr (options->route_sa_family, arg,
+                         options->route_dest_addr,
                          options->route_dest_addr_size,
                          options->route_resolve_names);
       break;
@@ -323,7 +336,8 @@ main (int argc, char *argv[])
 
     case ROUTE_COMMAND_SHOW:
       (*show_header_action) ();
-      list = route_info = (*route_backend->show) (options.route_resolve_names);
+      list = route_info = (*route_backend->show) (options.route_sa_family,
+                                                  options.route_resolve_names);
       while (route_info != NULL)
         {
           (*show_info_action) (route_info);
@@ -362,6 +376,7 @@ route_options_init (route_options_t *const options)
   memset ((void *) options, 0, sizeof (*options));
   options->route_command = ROUTE_COMMAND_SHOW;
   options->route_resolve_names = 1;
+  options->route_sa_family = AF_INET;
   show_header_action = show_route_header;
   show_info_action = show_route_info;
 }
