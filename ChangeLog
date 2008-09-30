@@ -1,5 +1,11 @@
 2008-09-30  Debarshi Ray  <rishi@gnu.org>
 
+	* hostname.c (get_name_action_t, set_name_action_t): New typedefs.
+	(parse_opt, main): Use suitable casts on getdomainname and
+	sethostname to silence compiler warnings on FreeBSD.
+
+2008-09-30  Debarshi Ray  <rishi@gnu.org>
+
 	* AUTHORS: Update.
 
 2008-09-30  Debarshi Ray  <rishi@gnu.org>

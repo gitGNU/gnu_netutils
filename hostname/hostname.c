@@ -46,8 +46,11 @@ struct _hostname_options
 };
 typedef struct _hostname_options hostname_options;
 
-static int (*get_name_action) (char *name, size_t size) = NULL;
-static int (*set_name_action) (const char *name, size_t size) = NULL;
+typedef int (*get_name_action_t) (char *name, size_t size);
+typedef int (*set_name_action_t) (const char *name, size_t size);
+
+static get_name_action_t get_name_action = NULL;
+static set_name_action_t set_name_action = NULL;
 
 ARGP_PROGRAM_DATA ("hostname", "2008", "Debarshi Ray");
 
@@ -92,7 +95,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'F':
-      set_name_action = sethostname;
+      set_name_action = (set_name_action_t) sethostname;
       options->hostname_file = arg;
       break;
 
@@ -113,11 +116,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'y':
-      get_name_action = getdomainname;
+      get_name_action = (get_name_action_t) getdomainname;
       break;
 
     case ARGP_KEY_ARG:
-      set_name_action = sethostname;
+      set_name_action = (set_name_action_t) sethostname;
       options->hostname_new = strdup (arg);
       if (options->hostname_new == NULL)
         error (EXIT_FAILURE, errno, "strdup");
@@ -156,9 +159,10 @@ main (int argc, char *argv[])
   if (get_name_action == NULL && set_name_action ==  NULL)
     get_name_action = gethostname;
 
-  if (get_name_action == getdomainname || get_name_action == gethostname)
+  if (get_name_action == (get_name_action_t) getdomainname
+      || get_name_action == gethostname)
     get_name (&options);
-  else if (set_name_action == sethostname)
+  else if (set_name_action == (set_name_action_t) sethostname)
     set_name (&options);
 
   return 0;
