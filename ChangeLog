@@ -1,5 +1,9 @@
 2008-09-30  Debarshi Ray  <rishi@gnu.org>
 
+	* AUTHORS: Update.
+
+2008-09-30  Debarshi Ray  <rishi@gnu.org>
+
 	* libroute/route.h (struct _route_backend_t): Renamed to
 	`struct	route_backend'.
 	* route/route.c (enum _route_command_t): Likewise.
