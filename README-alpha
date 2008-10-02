@@ -17,9 +17,9 @@ issue the following command:
 
 
 You will also need to get a recent version of `gnulib', preferbly from
-CVS.  To fetch the tree issue the following command:
+Git.  To fetch the tree issue the following command:
 
-  cvs -d:pserver:anoncvs@cvs.gnu.org:/cvsroot/gnulib co gnulib
+  git clone git://git.savannah.gnu.org/gnulib.git
 
 There is a script in gnulib/build-aux called `bootstrap', that you
 will need to run.  You need recent versions of automake and autoconf

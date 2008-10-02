@@ -1,5 +1,9 @@
 2008-10-03  Debarshi Ray  <rishi@gnu.org>
 
+	* README-alpha: Updated -- Gnulib uses Git now.
+
+2008-10-03  Debarshi Ray  <rishi@gnu.org>
+
 	* Makefile.am, NEWS, README, configure.ac, doc/Makefile.am,
 	doc/inetutils.texi, doc/rfc/Makefile.am, ftp/Makefile.am,
 	ftpd/Makefile.am, gwhois/Makefile.am, headers/Makefile.am,
