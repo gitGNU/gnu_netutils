@@ -1,5 +1,10 @@
 2008-10-03  Debarshi Ray  <rishi@gnu.org>
 
+	* NEWS: GNU Inetutils has been forked into Netutils.
+	* README: Likewise.  Add new system types known to work.
+
+2008-10-03  Debarshi Ray  <rishi@gnu.org>
+
 	* README-alpha: Updated -- Gnulib uses Git now.
 
 2008-10-03  Debarshi Ray  <rishi@gnu.org>

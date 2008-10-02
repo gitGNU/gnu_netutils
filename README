@@ -1,6 +1,7 @@
 Netutils
 
-This is a distribution of common network utilities and servers.
+This is a distribution of common network utilities and servers, and has
+been forked from GNU Inetutils.
 
 They are currently mostly from the 4.4BSD-Lite2 distribution, with
 some changes to make them compatible with the GNU Hurd (in particular,
@@ -22,6 +23,8 @@ believed to work on the following system types (and others may work):
 
   i486-pc-gnu
   i486-pc-linux-gnu
+  x86_64-pc-linux-gnu
+  i386-pc-freebsd7.0
   m68k-hp-netbsd1.2
   sparc-sun-netbsd1.2
 

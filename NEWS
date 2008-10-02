@@ -9,6 +9,9 @@ Please send inetutils bug reports to <bug-inetutils@gnu.org>.
 Unreleased
 Version 1.6:
 
+* GNU Inetutils has been forked into Netutils.  Netutils is an
+  independent project and is not an official GNU package at the moment.
+
 * hostname
 
 New program.
