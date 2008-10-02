@@ -1,3 +1,37 @@
+2008-10-03  Debarshi Ray  <rishi@gnu.org>
+
+	* Makefile.am, NEWS, README, configure.ac, doc/Makefile.am,
+	doc/inetutils.texi, doc/rfc/Makefile.am, ftp/Makefile.am,
+	ftpd/Makefile.am, gwhois/Makefile.am, headers/Makefile.am,
+	hostname/Makefile.am, hostname/hostname.c, ifconfig/Makefile.am,
+	ifconfig/system/Makefile.am, inetd/Makefile.am, inetd/inetd.c,
+	libicmp/Makefile.am, libicmp/icmp.h, libicmp/icmp_address.c,
+	libicmp/icmp_cksum.c, libicmp/icmp_echo.c,
+	libicmp/icmp_timestamp.c, libicmp/libping.c, libicmp/ping.h,
+	libinetutils/Makefile.am, libinetutils/libinetutils.h,
+	libls/Makefile.am, libroute/Makefile.am, libroute/bsd_add.c,
+	libroute/bsd_delete.c, libroute/bsd_show.c, libroute/linux_add.c,
+	libroute/linux_delete.c, libroute/linux_show.c,	libroute/route.h,
+	libroute/route_backend.c, libroute/route_bsd.c,
+	libroute/route_bsd.h, libroute/route_common.c,
+	libroute/route_linux.c,	libroute/route_linux.h,
+	libtelnet/Makefile.am, libtelnet/kerberos5.c, libtelnet/shishi.c,
+	logger/Makefile.am, ping/Makefile.am, ping/ping.c, ping/ping6.c,
+	ping/ping6.h, ping/ping_address.c, ping/ping_common.c,
+	ping/ping_common.h, ping/ping_echo.c, ping/ping_router.c,
+	ping/ping_timestamp.c, rcp/Makefile.am, rexecd/Makefile.am,
+	rlogin/Makefile.am, rlogind/Makefile.am, rlogind/rlogind.c,
+	route/Makefile.am, route/route.c, rsh/Makefile.am,
+	rshd/Makefile.am, syslogd/Makefile.am, talk/Makefile.am,
+	talkd/Makefile.am, talkd/acl.c,	talkd/announce.c, talkd/intalkd.h,
+	talkd/print.c, talkd/process.c,	talkd/table.c, talkd/talkd.c,
+	telnet/Makefile.am, telnetd/Makefile.am, telnetd/pty.c,
+	telnetd/telnetd.c, telnetd/telnetd.h, telnetd/term.c,
+	telnetd/utility.c, tests/Makefile.am, tests/localhost.c,
+	tftp/Makefile.am, tftpd/Makefile.am, traceroute/Makefile.am,
+	traceroute/traceroute.c, traceroute/traceroute.h,
+	uucpd/Makefile.am: Updated, to reflect being a part of Netutils.
+
 2008-09-30  Debarshi Ray  <rishi@gnu.org>
 
 	* hostname/hostname.c (get_name_action_t, set_name_action_t):
@@ -178,7 +212,7 @@
 	* configure.ac (AC_CHECK_TYPE): Removed checks for `socklen_t' and
 	`sa_family_t'.
 	(AC_CHECK_TYPES): Added checks for `socklen_t' and `sa_family_t'.
-	
+
 2008-09-11  Debarshi Ray  <rishi@gnu.org>
 
 	* bootstrap.conf (gnulib_modules): Added `progname'.
@@ -208,7 +242,7 @@
 
 	* hostname/hostname.c: Include <arpa/inet.h> and <netinet/in.h>.
 	Added new switches --alias, --ip-address and removed
-	OPTION_HIDDEN from --file. 
+	OPTION_HIDDEN from --file.
 	(hostname_alias, hostname_ip_address): New variables.
 	(get_aliases, get_ip_addresses, parse_file): New functions.
 	(main): Replace printf with puts.

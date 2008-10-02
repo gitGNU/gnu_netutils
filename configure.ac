@@ -1,4 +1,4 @@
-# Configuration for inetutils
+# Configuration for Netutils
 #
 # Copyright (C) 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2005, 2006, 2007 Free Software Foundation, Inc.
 #
@@ -21,7 +21,7 @@
 
 AC_PREREQ(2.59)
 
-AC_INIT([GNU inetutils], [1.5], [bug-inetutils@gnu.org])
+AC_INIT([Netutils], [1.5], [bug-inetutils@gnu.org])
 
 AC_CONFIG_SRCDIR([inetd/inetd.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -575,13 +575,13 @@ IU_CHECK_MEMBERS([struct hostent.h_addr_list], , , [#include <netdb.h>])
 IU_CHECK_MEMBERS([struct stat.st_blksize])
 
 ### Checks for compiler characteristics.
-AM_C_PROTOTYPES dnl FIXME: Does inetutils even compile on pre-ANSI compilers?
+AM_C_PROTOTYPES dnl FIXME: Does Netutils even compile on pre-ANSI compilers?
 AC_C_CONST
 
 dnl See if `weak refs' are possible; these make it possible (with shared
 dnl libraries) to check for the existance of a standard function at run-time
 dnl instead of compile time, which is very handy for distributing binary
-dnl version programs that automatically adapt -- in inetutils case, to whether
+dnl version programs that automatically adapt -- in Netutils case, to whether
 dnl or not crypt is available.
 IU_CHECK_WEAK_REFS
 
@@ -731,11 +731,11 @@ AC_CHECK_DECLS(environ, , ,
 
 dnl See if we have h_errno (the test is here so we can use -lresolv
 dnl if necessary).
-AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
+AC_CACHE_CHECK([for h_errno], ietutils_cv_var_h_errno,
   AC_TRY_COMPILE([#include <netdb.h>],
     [ extern int h_errno; int iu_x = h_errno; ],
-    inetutils_cv_var_h_errno=yes, inetutils_cv_var_h_errno=no))
-if test "$inetutils_cv_var_h_errno" = yes; then
+    netutils_cv_var_h_errno=yes, netutils_cv_var_h_errno=no))
+if test "$netutils_cv_var_h_errno" = yes; then
   dnl FIXME: Isn't this wrong? Shouldn't the declaration check define
   dnl        this if we find h_errno?
   AC_DEFINE(HAVE_H_ERRNO, 1, [Define to one if you have h_errno.])
@@ -769,12 +769,12 @@ IU_CHECK_MACRO(_FILENO macros,
 dnl See where to find fd_set (bit-vectors for select) manipulation macros.
 IU_CHECK_MACRO(fd_set macros, [#include <sys/types.h>],
   FD_ZERO FD_CLR FD_SET FD_ISSET)
-if test "$inetutils_cv_macro_fd_set_macros" = no; then
+if test "$netutils_cv_macro_fd_set_macros" = no; then
   IU_CHECK_MACRO(fd_set macros in <sys/time.h>, [#include <sys/time.h>],
     FD_ZERO FD_CLR FD_SET FD_ISSET)
 fi
 
-dnl Configure paths used by inetutils programs.  See the file `paths' for
+dnl Configure paths used by Netutils programs.  See the file `paths' for
 dnl details.
 PATHDEFS_MAKE=pathdefs.make
 PATHS_DEFS=paths.defs

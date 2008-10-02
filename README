@@ -1,6 +1,6 @@
-GNU Inetutils
+Netutils
 
-This is a distribution of common networking utilities and servers.
+This is a distribution of common network utilities and servers.
 
 They are currently mostly from the 4.4BSD-Lite2 distribution, with
 some changes to make them compatible with the GNU Hurd (in particular,
@@ -17,7 +17,7 @@ also does not have a complete list of whois servers; feel free to send
 information about additional whois servers to the bug reporting
 address.
 
-There are probably many BSD dependencies remaining, but inetutils is
+There are probably many BSD dependencies remaining, but Netutils is
 believed to work on the following system types (and others may work):
 
   i486-pc-gnu
@@ -54,8 +54,8 @@ Some known deficiencies:
  o Many programs do not support long options, such as --version or
    --help.
  o The authentication and encryption options have not been tested.
- o GNU Inetutils does not work on Solaris.  Patches to make GNU
-   Inetutils work on Solaris are happily accepted.
+ o Netutils does not work on Solaris.  Patches to make
+   Netutils work on Solaris are happily accepted.
 
 See the file INSTALL for installation instructions.
 

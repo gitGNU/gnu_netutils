@@ -1,4 +1,4 @@
-GNU inetutils NEWS -- history of user-visible changes.
+Netutils NEWS -- history of user-visible changes.
 
 Copyright (C) 2002, 2004, 2006, 2007, 2008 
 	  Free Software Foundation, Inc.
@@ -112,7 +112,7 @@ Version 1.4.0:
   programs etc.  It also supports several new options on the command
   line.
 
-* Inetutils should generally compile on most platforms now.
+* Netutils should generally compile on most platforms now.
 
 
 March, 13, 1998

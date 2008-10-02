@@ -1,6 +1,6 @@
 /* Copyright (C) 2003, 2007, 2008 Free Software Foundation, Inc.
 
-This file is part of Shishi / GNU Inetutils.
+This file is part of Shishi / Netutils.
 
 Shishi is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
