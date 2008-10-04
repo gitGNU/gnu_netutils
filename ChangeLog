@@ -1,3 +1,10 @@
+2008-10-05  Debarshi Ray  <rishi@gnu.org>
+
+	* libroute/linux_add.c, libroute/linux_delete.c,
+	libroute/linux_show.c: Merged with libroute/route_linux.c and
+	remove.
+	* libroute/Makefile.am: Updated.
+
 2008-10-04  Debarshi Ray  <rishi@gnu.org>
 
 	* libroute/route_linux.h: Remove includes for <asm/types.h>,

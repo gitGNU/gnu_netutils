@@ -20,11 +20,9 @@ noinst_LTLIBRARIES = @libroute_BUILD@
 
 EXTRA_LTLIBRARIES = libroute.la
 
-libroute_la_SOURCES =	route_backend.c route_common.c route_$(KERNEL).c \
-			$(KERNEL)_add.c $(KERNEL)_delete.c $(KERNEL)_show.c
+libroute_la_SOURCES =	route_backend.c route_common.c route_$(KERNEL).c
 
-EXTRA_libroute_la_SOURCES = 	bsd_add.c bsd_delete.c bsd_show.c linux_add.c \
-				linux_delete.c linux_show.c route_bsd.c \
+EXTRA_libroute_la_SOURCES = 	bsd_add.c bsd_delete.c bsd_show.c route_bsd.c \
 				route_linux.c
 
 noinst_HEADERS = route.h route_bsd.h route_linux.h
