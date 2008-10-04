@@ -50,19 +50,20 @@ const route_backend_t linux_backend =
     linux_show
   };
 
-char * linux_conv_addr_to_name (struct nl_addr *const addr,
-                                char *const buffer, const size_t buffer_size,
-                                const short int resolve_names);
+static char * linux_conv_addr_to_name (struct nl_addr *const addr,
+                                       char *const buffer,
+                                       const size_t buffer_size,
+                                       const short int resolve_names);
 static struct nl_handle * linux_create_handle (void);
-void linux_modify (const int format,
-                   const int flags,
-                   const void *const dest_addr,
-                   const size_t dest_addr_size,
-                   const unsigned char dest_len,
-                   const void *const gw_addr,
-                   const size_t gw_addr_size,
-                   const unsigned int oif_index);
-void linux_parse_route (struct nl_object *object, void *data);
+static void linux_modify (const int format,
+                          const int flags,
+                          const void *const dest_addr,
+                          const size_t dest_addr_size,
+                          const unsigned char dest_len,
+                          const void *const gw_addr,
+                          const size_t gw_addr_size,
+                          const unsigned int oif_index);
+static void linux_parse_route (struct nl_object *object, void *data);
 
 void
 linux_add (const int format,
@@ -106,7 +107,7 @@ linux_change (const int format,
                 gw_addr, gw_addr_size, iface);
 }
 
-char *
+static char *
 linux_conv_addr_to_name (struct nl_addr *const addr,
                          char *const buffer, const size_t buffer_size,
                          const short int resolve_names)
@@ -228,7 +229,7 @@ linux_replace (const int format,
                 gw_addr, gw_addr_size, iface);
 }
 
-void
+static void
 linux_modify (const int format,
               const int flags,
 	      const void *const dest_addr,
@@ -278,7 +279,7 @@ linux_modify (const int format,
   nl_handle_destroy (handle);
 }
 
-void
+static void
 linux_parse_route (struct nl_object *object, void *data)
 {
   const char *status;
