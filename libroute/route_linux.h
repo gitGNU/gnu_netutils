@@ -22,22 +22,8 @@
 
 #include <stddef.h>
 
-#include <asm/types.h>
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
-
 #include "route.h"
 
-struct _rtmroute_t
-{
-  struct nlmsghdr nlmsghdr;
-  struct rtmsg rtmsg;
-  /* According to iproute2, 1024 bytes should be enough.  Although BUFSIZ is
-     guaranteed to be only 256, in GNU libc it is 8192. */
-  char buffer[BUFSIZ];
-};
-typedef struct _rtmroute_t rtmroute_t;
-
 extern void linux_add (const int format,
                        const void *const dest_addr,
                        const size_t dest_addr_size,

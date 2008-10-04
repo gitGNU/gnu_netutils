@@ -1,3 +1,9 @@
+2008-10-04  Debarshi Ray  <rishi@gnu.org>
+
+	* libroute/route_linux.h: Remove includes for <asm/types.h>,
+	<linux/netlink.h> and <linux/rtnetlink.h>.
+	(struct _rtmroute_t, rtmroute_t): Removed.
+
 2008-10-03  Debarshi Ray  <rishi@gnu.org>
 
 	* NEWS: GNU Inetutils has been forked into Netutils.
