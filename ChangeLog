@@ -1,3 +1,8 @@
+2008-10-07  Ashish Shukla  <wahjava@gmail.com>
+
+	* libroute/bsd_show.c (bsd_parse_msg): Calculate destination mask
+	length.
+
 2008-10-05  Debarshi Ray  <rishi@gnu.org>
 
 	* libroute/route_linux.c (linux_conv_addr_to_name, linux_modify,

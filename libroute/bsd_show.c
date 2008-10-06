@@ -216,15 +216,47 @@ bsd_parse_msg (const sa_family_t sa_family,
                                        + SA_SIZE(sock_addr));
       if ((msg->rtm_addrs & RTA_NETMASK) != 0)
         {
-          char buffer[sizeof(struct sockaddr_in6)];
+          char buffer[sizeof (struct sockaddr_in6)];
+          unsigned char* s_addr;
+          socklen_t s_len;
 
-	  memset (buffer, 0, sizeof(struct sockaddr_in6));
+          memset (buffer, 0, sizeof (struct sockaddr_in6));
           strncpy (buffer, (char *) sock_addr, sock_addr->sa_len);
           ((struct sockaddr *) buffer)->sa_family = sa_family;
 
-	  bsd_conv_addr_to_name ((struct sockaddr *) buffer,
+          s_addr = &(sock_addr->sa_data[2]);
+          s_len = sock_addr->sa_len;
+          route_info->dest_len = 0;
+
+          if (s_len != 0)
+            {
+              /* Figure out the length of address in the sockaddr structure,
+               * by subtracting the offset portion of the address (in
+               * sockaddr structure) from the length of sockaddr structure.
+               * NOTE: the length will be dynamic as this is a netmask
+               * represented in a sockaddr.
+               */
+              s_len -= (sa_family == AF_INET) ?
+                (socklen_t) ((char *) (&((struct sockaddr_in *)
+                  sock_addr)->sin_addr) - (char *) sock_addr):
+                (socklen_t) ((char *) (&((struct sockaddr_in6 *)
+                  sock_addr)->sin6_addr) - (char *) sock_addr);
+            }
+
+          bsd_conv_addr_to_name ((struct sockaddr *) buffer,
                                  route_info->dest_mask,
                                  sizeof(route_info->dest_mask), 0);
+
+          while (s_len != 0)
+            {
+              while ((*s_addr & 0x80) != 0)
+                {
+                  route_info->dest_len++;
+                  *s_addr <<= 1;
+                }
+              s_addr++;
+              s_len--;
+            }
         }
 
     next:
