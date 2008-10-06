@@ -1,5 +1,13 @@
 2008-10-07  Ashish Shukla  <wahjava@gmail.com>
 
+	* libroute/route_common.c (conv_name_to_addr): Support IPv6
+	addresses.  Use `gethostbyname2' instead of `gethostbyname'.
+
+	* route/route.c: Include <netinet/in.h>.
+	(parse_opt, main): Support IPv6 addresses.
+
+2008-10-07  Ashish Shukla  <wahjava@gmail.com>
+
 	* libroute/bsd_show.c (bsd_parse_msg): Calculate destination mask
 	length.
 

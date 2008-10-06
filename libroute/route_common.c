@@ -106,40 +106,49 @@ conv_name_to_addr (const int format, const char *const name,
     case AF_INET:
       addr_size = sizeof (struct in_addr);
       break;
+    case AF_INET6:
+      addr_size = sizeof (struct in6_addr);
+      break;
     }
 
   if (buffer_size < addr_size)
     error (EXIT_FAILURE, 0, "insufficient buffer size");
 
-  /* FIXME: IPv4 specific. */
   if (resolve_names != 0)
     {
       /* First get rid of the idiosyncrasies. */
       if (strcmp ("default", name) == 0 || strcmp ("*", name) == 0)
         {
-          status = inet_pton (format, "0.0.0.0", buffer);
+          status = inet_pton (format,
+			      (format == AF_INET ? "0.0.0.0":"::"), buffer);
           if (status < 0)
             error (EXIT_FAILURE, errno, "inet_pton");
           else if (status == 0)
-            error (EXIT_FAILURE, 0, "invalid address (%s)", "0.0.0.0");
+            error (EXIT_FAILURE, 0, "invalid address (%s)",
+		   (format == AF_INET ? "0.0.0.0":"::"));
         }
       /* Next try to resolve host or network name.
-         gethostbyname does not seem to mind if it is fed network addresses
+         gethostbyname2 does not seem to mind if it is fed network addresses
          instead of names. */
       else
         {
-          /* FIXME: use gethostbyname2 if it is present in GNULib. */
-          ht = gethostbyname (name);
+          /* FIXME: GNULib does not provide gethostbyname2. */
+          ht = gethostbyname2 (name, format);
           if (ht == NULL)
             {
-              /* FIXME: IPv4 specific. */
-              nt = getnetbyname (name);
-              if (nt == NULL)
-                error (EXIT_FAILURE, 0, "invalid name (%s)", name);
+              if (format == AF_INET)
+                {
+                  /* FIXME: IPv4 specific. */
+                  nt = getnetbyname (name);
+                  if (nt == NULL)
+                    error (EXIT_FAILURE, 0, "invalid name (%s)", name);
 
-              network = (uint32_t) nt->n_net;
-              network = htonl (network);
-              memmove (buffer, (void *) &network, sizeof (network));
+                  network = (uint32_t) nt->n_net;
+                  network = htonl (network);
+                  memmove (buffer, (void *) &network, sizeof (network));
+                }
+              else
+                error (EXIT_FAILURE, 0, "invalid name (%s)", name);
             }
           /* We have already checked the buffer size.  No harm in doing it
              twice.  Better safe than sorry. */

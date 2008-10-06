@@ -29,6 +29,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <net/if.h>
+#include <netinet/in.h>
 #include <sys/types.h>
 
 #include "libinetutils.h"
@@ -166,7 +167,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'g':
-      options->route_gw_addr_size = sizeof (struct in_addr);
+      options->route_gw_addr_size = (options->route_sa_family == AF_INET ?
+                                     sizeof (struct in_addr):
+                                     sizeof (struct in6_addr));
+
       options->route_gw_addr = xmalloc (options->route_gw_addr_size);
       conv_name_to_addr (options->route_sa_family, arg,
                          options->route_gw_addr,
@@ -175,13 +179,15 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARG_HOST:
-      options->route_dest_addr_size = sizeof (struct in_addr);
+      options->route_dest_addr_size = (options->route_sa_family == AF_INET ?
+                                       sizeof (struct in_addr):
+                                       sizeof (struct in6_addr));
       options->route_dest_addr = xmalloc (options->route_dest_addr_size);
       conv_name_to_addr (options->route_sa_family, arg,
                          options->route_dest_addr,
                          options->route_dest_addr_size,
                          options->route_resolve_names);
-      options->route_dest_len = sizeof (struct in_addr) * 8;
+      options->route_dest_len = options->route_dest_addr_size * 8;
       break;
 
     case ARG_IP:
@@ -190,7 +196,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARG_NET:
-      options->route_dest_addr_size = sizeof (struct in_addr);
+      options->route_dest_addr_size = (options->route_sa_family == AF_INET ?
+                                       sizeof (struct in_addr):
+                                       sizeof (struct in6_addr));
       options->route_dest_addr = xmalloc (options->route_dest_addr_size);
       conv_name_to_addr (options->route_sa_family, arg,
                          options->route_dest_addr,
@@ -278,7 +286,7 @@ main (int argc, char *argv[])
   switch (options.route_command)
     {
     case ROUTE_COMMAND_ADD:
-      (*route_backend->add) (AF_INET,
+      (*route_backend->add) (options.route_sa_family,
                              options.route_dest_addr,
                              options.route_dest_addr_size,
                              options.route_dest_len,
@@ -288,7 +296,7 @@ main (int argc, char *argv[])
       break;
 
     case ROUTE_COMMAND_APPEND:
-      (*route_backend->append) (AF_INET,
+      (*route_backend->append) (options.route_sa_family,
                                 options.route_dest_addr,
                                 options.route_dest_addr_size,
                                 options.route_dest_len,
@@ -298,7 +306,7 @@ main (int argc, char *argv[])
       break;
 
     case ROUTE_COMMAND_CHANGE:
-      (*route_backend->change) (AF_INET,
+      (*route_backend->change) (options.route_sa_family,
                                 options.route_dest_addr,
                                 options.route_dest_addr_size,
                                 options.route_dest_len,
@@ -308,14 +316,14 @@ main (int argc, char *argv[])
       break;
 
     case ROUTE_COMMAND_DELETE:
-      (*route_backend->delete) (AF_INET,
+      (*route_backend->delete) (options.route_sa_family,
                                 options.route_dest_addr,
                                 options.route_dest_addr_size,
                                 options.route_dest_len);
       break;
 
     case ROUTE_COMMAND_PREPEND:
-      (*route_backend->prepend) (AF_INET,
+      (*route_backend->prepend) (options.route_sa_family,
                                  options.route_dest_addr,
                                  options.route_dest_addr_size,
                                  options.route_dest_len,
@@ -325,7 +333,7 @@ main (int argc, char *argv[])
       break;
 
     case ROUTE_COMMAND_REPLACE:
-      (*route_backend->replace) (AF_INET,
+      (*route_backend->replace) (options.route_sa_family,
                                  options.route_dest_addr,
                                  options.route_dest_addr_size,
                                  options.route_dest_len,
