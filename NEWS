@@ -12,13 +12,11 @@ Version 1.6:
 * GNU Inetutils has been forked into Netutils.  Netutils is an
   independent project and is not an official GNU package at the moment.
 
-* hostname
+* Various bug fixes and clean ups.
 
-New program.
+* hostname, traceroute
 
-* traceroute
-
-New program.
+New programs.
 
 * ping and ping6 now exit after four packet instead of pinging forever.
 
