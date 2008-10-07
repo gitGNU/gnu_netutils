@@ -1,3 +1,7 @@
+2008-10-08  Arash Yadegarnia  <arash@bluehome.net> (tiny change)
+
+	* doc/ftpd.texi (ftpd): Updated documentation for `--auth'.
+
 2008-10-08  Alfred M. Szmidt  <ams@gnu.org>
 
 	* doc/traceroute.texi: New file
