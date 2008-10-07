@@ -1,5 +1,9 @@
 2008-10-08  Alfred M. Szmidt  <ams@gnu.org>
 
+	* doc/traceroute.texi: New file
+
+2008-10-08  Alfred M. Szmidt  <ams@gnu.org>
+
 	* NEWS: Updated and minor clean up.
 
 2008-10-07  Ashish Shukla  <wahjava@gmail.com>
