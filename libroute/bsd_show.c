@@ -224,9 +224,15 @@ bsd_parse_msg (const sa_family_t sa_family,
           strncpy (buffer, (char *) sock_addr, sock_addr->sa_len);
           ((struct sockaddr *) buffer)->sa_family = sa_family;
 
-          s_addr = &(sock_addr->sa_data[2]);
+          s_addr = ((sa_family == AF_INET)
+                   ? (unsigned char *) &((struct sockaddr_in *)
+                      sock_addr)->sin_addr
+                   : (unsigned char *) &((struct sockaddr_in6 *)
+                      sock_addr)->sin6_addr);
+
           s_len = sock_addr->sa_len;
           route_info->dest_len = 0;
+
 
           if (s_len != 0)
             {
@@ -236,11 +242,7 @@ bsd_parse_msg (const sa_family_t sa_family,
                * NOTE: the length will be dynamic as this is a netmask
                * represented in a sockaddr.
                */
-              s_len -= (sa_family == AF_INET) ?
-                (socklen_t) ((char *) (&((struct sockaddr_in *)
-                  sock_addr)->sin_addr) - (char *) sock_addr):
-                (socklen_t) ((char *) (&((struct sockaddr_in6 *)
-                  sock_addr)->sin6_addr) - (char *) sock_addr);
+              s_len -= (socklen_t) ((char *) s_addr - (char *) sock_addr);
             }
 
           bsd_conv_addr_to_name ((struct sockaddr *) buffer,

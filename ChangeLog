@@ -1,3 +1,8 @@
+2008-10-10  Ashish Shukla  <wahjava@gmail.com>
+
+	* libroute/bsd_show.c (bsd_parse_msg): Fixed calculation of
+	variables S_ADDR and S_LEN.
+
 2008-10-08  Alfred M. Szmidt  <ams@gnu.org>
 
 	* Makefile.am (DISTCLEANFILES): Removed `include/*.h,
