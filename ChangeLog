@@ -1,5 +1,12 @@
 2008-10-14  Rakesh Pandit  <rakesh.pandit@gmail.com>
 
+	* libicmp/Makefile.am (libicmp_a_SOURCES): Removed libping.c
+	and ping.h
+
+	* ping/Makefile.am (ping_SOURCES): Added libping.c and ping.h
+
+2008-10-14  Rakesh Pandit  <rakesh.pandit@gmail.com>
+
 	* ping/ping6.c (is_root, count, interval, socket_type):
 	New global variables count, interval & socket_type, similar to ping.c
 	Initialize to is_root and count to false and DEFAULT_PING_COUNT
