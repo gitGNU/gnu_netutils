@@ -1,3 +1,8 @@
+2008-10-15  Debarshi Ray  <rishi@gnu.org>
+
+	* bootstrap: New file from Gnulib Git.
+	* README-alpha: Updated.
+
 2008-10-14  Rakesh Pandit  <rakesh.pandit@gmail.com>
 
         * ping/ping_impl.h, ping/ping.h, ping/ping_common.h,

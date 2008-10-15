@@ -25,7 +25,7 @@ There is a script in gnulib/build-aux called `bootstrap', that you
 will need to run.  You need recent versions of automake and autoconf
 for this to work.  To run it issue the following command:
 
-  GNULIB-DIRECTORY/build-aux/bootstrap --gnulib-srcdir=GNULIB-DIRECTORY
+  ./bootstrap --gnulib-srcdir=GNULIB-DIRECTORY
 
 Note that you cannot use ~ in the second GNULIB-DIRECTORY, you'll have
 to replace it with $HOME or use the full path.
